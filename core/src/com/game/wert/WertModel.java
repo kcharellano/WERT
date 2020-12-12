@@ -13,35 +13,51 @@ import com.game.wert.controller.KeyboardController;
 
 public class WertModel {
 	public World world;
+	public boolean isSwimming = false;
 	
 	private Box2DDebugRenderer debugRenderer;
 	private OrthographicCamera camera;
 	private Body bodyDynamic;
 	private Body bodyStatic;
 	private Body bodyKinematic;
+	private Body player;
 	private KeyboardController controller;
 	
 	public WertModel () {
 		//this.controller = controller;
 		world = new World(new Vector2(0, -10f), true);
+		world.setContactListener(new WertContactListener(this));
 		createFloor();
-		createObject();
-		createMovingObject();
+		//createObject();
+		//createMovingObject();
 		
 		// get our body factory singleton and store it in bodyFactory
 		BodyFactory bodyFactory = BodyFactory.getInstance(world);
 		
+		// add a player
+		player = bodyFactory.makeBoxPolyBody(1, 1, 2, 2, BodyFactory.RUBBER, BodyType.DynamicBody,false);
+		
+		// add some water
+		Body water =  bodyFactory.makeBoxPolyBody(1, -8, 50, 25, BodyFactory.RUBBER, BodyType.StaticBody,false);
+		water.setUserData("IAMTHESEA");
+		
+		// make the water a sensor so it doesn't obstruct our player
+		bodyFactory.makeAllFixturesSensors(water);
+		
 		// add a new rubber ball at position 1, 1
-		bodyFactory.makeCirclePolyBody(1, 1, 2, BodyFactory.RUBBER, BodyType.DynamicBody,false);
+		//bodyFactory.makeCirclePolyBody(1, 1, 2, BodyFactory.RUBBER, BodyType.DynamicBody,false);
 		
 		// add a new steel ball at position 4, 1
-		bodyFactory.makeCirclePolyBody(4, 1, 2, BodyFactory.STEEL, BodyType.DynamicBody,false);
+		//bodyFactory.makeCirclePolyBody(4, 1, 2, BodyFactory.STEEL, BodyType.DynamicBody,false);
 		
 		// add a new stone at position -4,1
-		bodyFactory.makeCirclePolyBody(-4, 1, 2, BodyFactory.STONE, BodyType.DynamicBody,false);
+		//bodyFactory.makeCirclePolyBody(-4, 1, 2, BodyFactory.STONE, BodyType.DynamicBody,false);
 	}
 	
-	public void logicStep(float delta) {	
+	public void logicStep(float delta) {
+		if(isSwimming) {
+			player.applyForceToCenter(0, 45, true);
+		}
 		world.step(delta , 3, 3);
 	}
 	
