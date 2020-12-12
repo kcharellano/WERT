@@ -7,25 +7,27 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.game.wert.WertGame;
 import com.game.wert.WertModel;
+import com.game.wert.controller.KeyboardController;
 
 public class MainScreen implements Screen {
 	private WertGame orchestrator;
 	private WertModel model;
 	private OrthographicCamera cam;
 	private Box2DDebugRenderer debugRenderer;
+	private KeyboardController controller;
 	
 	// constructor
 	public MainScreen(WertGame wertGame) {
 		orchestrator = wertGame;
-		model = new WertModel();
 		cam = new OrthographicCamera(32, 24);
+		controller = new KeyboardController();
+		model = new WertModel();
 		debugRenderer = new Box2DDebugRenderer(true, true, true, true, true, true);
 	}
 
 	@Override
 	public void show() {
-		// TODO Auto-generated method stub
-		
+		Gdx.input.setInputProcessor(controller);
 	}
 
 	@Override

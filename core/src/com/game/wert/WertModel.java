@@ -4,10 +4,12 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.game.wert.controller.KeyboardController;
 
 public class WertModel {
 	public World world;
@@ -17,16 +19,30 @@ public class WertModel {
 	private Body bodyDynamic;
 	private Body bodyStatic;
 	private Body bodyKinematic;
+	private KeyboardController controller;
 	
 	public WertModel () {
+		//this.controller = controller;
 		world = new World(new Vector2(0, -10f), true);
 		createFloor();
 		createObject();
 		createMovingObject();
+		
+		// get our body factory singleton and store it in bodyFactory
+		BodyFactory bodyFactory = BodyFactory.getInstance(world);
+		
+		// add a new rubber ball at position 1, 1
+		bodyFactory.makeCirclePolyBody(1, 1, 2, BodyFactory.RUBBER, BodyType.DynamicBody,false);
+		
+		// add a new steel ball at position 4, 1
+		bodyFactory.makeCirclePolyBody(4, 1, 2, BodyFactory.STEEL, BodyType.DynamicBody,false);
+		
+		// add a new stone at position -4,1
+		bodyFactory.makeCirclePolyBody(-4, 1, 2, BodyFactory.STONE, BodyType.DynamicBody,false);
 	}
 	
-	public void logicStep(float delta) {
-		world.step(delta, 3, 3);
+	public void logicStep(float delta) {	
+		world.step(delta , 3, 3);
 	}
 	
 	//dynamic body
