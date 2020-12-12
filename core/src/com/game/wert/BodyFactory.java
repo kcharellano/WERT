@@ -19,6 +19,7 @@ public class BodyFactory {
 	public static final int WOOD = 1;
 	public static final int RUBBER = 2;
 	public static final int STONE = 3;
+	public static final int TEST = 4;
 	
 	private BodyFactory(World world) {
 		this.world = world;
@@ -61,6 +62,11 @@ public class BodyFactory {
 			fixtureDef.density = 1f;
 			fixtureDef.friction = 0.9f;
 			fixtureDef.restitution = 0.01f;
+		case TEST:
+			fixtureDef.density = 0.0f;
+			fixtureDef.friction = 0.1f;
+			fixtureDef.restitution = 0.01f;
+			break;
 		default:
 			fixtureDef.density = 7f;
 			fixtureDef.friction = 0.5f;

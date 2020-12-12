@@ -10,7 +10,7 @@ import com.game.wert.WertModel;
 import com.game.wert.controller.KeyboardController;
 
 public class MainScreen implements Screen {
-	private WertGame orchestrator;
+	private WertGame parent;
 	private WertModel model;
 	private OrthographicCamera cam;
 	private Box2DDebugRenderer debugRenderer;
@@ -18,10 +18,10 @@ public class MainScreen implements Screen {
 	
 	// constructor
 	public MainScreen(WertGame wertGame) {
-		orchestrator = wertGame;
+		parent = wertGame;
 		cam = new OrthographicCamera(32, 24);
 		controller = new KeyboardController();
-		model = new WertModel();
+		model = new WertModel(controller);
 		debugRenderer = new Box2DDebugRenderer(true, true, true, true, true, true);
 	}
 

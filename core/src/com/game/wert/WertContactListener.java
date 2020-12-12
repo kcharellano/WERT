@@ -1,7 +1,5 @@
 package com.game.wert;
 
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -22,6 +20,7 @@ public class WertContactListener implements  ContactListener {
 		Fixture fb = contact.getFixtureB();
 		System.out.println(fa.getBody().getType()+" has hit "+ fb.getBody().getType());
 		
+		/*
 		// resolves collisions between fixtures and the sea
 		if(fa.getBody().getUserData() == "IAMTHESEA"){
 			parent.isSwimming = true;
@@ -30,17 +29,8 @@ public class WertContactListener implements  ContactListener {
 			parent.isSwimming = true;
 			return;
 		}
+		*/
 		
-		if(fa.getBody().getType() == BodyType.StaticBody){
-			this.shootUpInAir(fa, fb);
-		}
-		else if(fb.getBody().getType() == BodyType.StaticBody){
-			this.shootUpInAir(fb, fa);
-		}
-		else{
-			// neither a nor b are static so do nothing
-			System.out.println("Neither fixture is static");
-		}
 	}
 
 	@Override
@@ -70,9 +60,11 @@ public class WertContactListener implements  ContactListener {
 		
 	}
 	
+	/*
 	private void shootUpInAir(Fixture staticFixture, Fixture otherFixture){
 		System.out.println("Adding Force");
 		otherFixture.getBody().applyForceToCenter(new Vector2(-100000,-100000), true);
 	}
+	*/
 
 }

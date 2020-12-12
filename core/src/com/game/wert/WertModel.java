@@ -23,8 +23,8 @@ public class WertModel {
 	private Body player;
 	private KeyboardController controller;
 	
-	public WertModel () {
-		//this.controller = controller;
+	public WertModel (KeyboardController controller) {
+		this.controller = controller;
 		world = new World(new Vector2(0, -10f), true);
 		world.setContactListener(new WertContactListener(this));
 		createFloor();
@@ -35,14 +35,14 @@ public class WertModel {
 		BodyFactory bodyFactory = BodyFactory.getInstance(world);
 		
 		// add a player
-		player = bodyFactory.makeBoxPolyBody(1, 1, 2, 2, BodyFactory.RUBBER, BodyType.DynamicBody,false);
+		player = bodyFactory.makeBoxPolyBody(1, 1, 2, 2, BodyFactory.TEST, BodyType.DynamicBody,false);
 		
 		// add some water
-		Body water =  bodyFactory.makeBoxPolyBody(1, -8, 50, 25, BodyFactory.RUBBER, BodyType.StaticBody,false);
-		water.setUserData("IAMTHESEA");
+		//Body water =  bodyFactory.makeBoxPolyBody(1, -8, 50, 25, BodyFactory.RUBBER, BodyType.StaticBody,false);
+		//water.setUserData("IAMTHESEA");
 		
 		// make the water a sensor so it doesn't obstruct our player
-		bodyFactory.makeAllFixturesSensors(water);
+		//bodyFactory.makeAllFixturesSensors(water);
 		
 		// add a new rubber ball at position 1, 1
 		//bodyFactory.makeCirclePolyBody(1, 1, 2, BodyFactory.RUBBER, BodyType.DynamicBody,false);
@@ -55,8 +55,17 @@ public class WertModel {
 	}
 	
 	public void logicStep(float delta) {
-		if(isSwimming) {
-			player.applyForceToCenter(0, 45, true);
+		if(controller.left){
+			player.applyForceToCenter(-10, 0,true);
+		}
+		else if(controller.right){
+			player.applyForceToCenter(10, 0,true);
+		}
+		else if(controller.up){
+			player.applyForceToCenter(0, 30,true);
+		}
+		else if(controller.down){
+			player.applyForceToCenter(0, -10,true);
 		}
 		world.step(delta , 3, 3);
 	}
@@ -98,7 +107,7 @@ public class WertModel {
 		bodyStatic = world.createBody(bodyDef);
 		// set the shape (here we use a box 50 meters wide, 1 meter tall )
 		PolygonShape shape = new PolygonShape();
-		shape.setAsBox(50, 1);
+		shape.setAsBox(50, 3);
 		// create the physical object in our body)
 		// without this our body would just be data in the world
 		bodyStatic.createFixture(shape, 0.0f);
