@@ -41,6 +41,8 @@ public class BodyFactory {
 	static public FixtureDef makeFixture(int material, Shape shape){
 		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.shape = shape;
+		//fixtureDef.filter.categoryBits = 0x0002;
+		//fixtureDef.filter.maskBits = 0x0004;
 			
 		switch(material){
 		case STEEL:
@@ -63,7 +65,7 @@ public class BodyFactory {
 			fixtureDef.friction = 0.9f;
 			fixtureDef.restitution = 0.01f;
 		case TEST:
-			fixtureDef.density = 0.0f;
+			fixtureDef.density = 1.0f;
 			fixtureDef.friction = 0.1f;
 			fixtureDef.restitution = 0.01f;
 			break;

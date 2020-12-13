@@ -9,6 +9,10 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.joints.DistanceJoint;
+import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
+import com.badlogic.gdx.physics.box2d.joints.RevoluteJoint;
+import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.game.wert.controller.KeyboardController;
 
 public class WertModel {
@@ -23,6 +27,9 @@ public class WertModel {
 	private Body player;
 	private KeyboardController controller;
 	
+	private Body obj1;
+	private Body obj2;
+	
 	public WertModel (KeyboardController controller) {
 		this.controller = controller;
 		world = new World(new Vector2(0, -10f), true);
@@ -35,7 +42,7 @@ public class WertModel {
 		BodyFactory bodyFactory = BodyFactory.getInstance(world);
 		
 		// add a player
-		player = bodyFactory.makeBoxPolyBody(1, 1, 2, 2, BodyFactory.TEST, BodyType.DynamicBody,false);
+		//player = bodyFactory.makeBoxPolyBody(1, 1, 2, 2, BodyFactory.TEST, BodyType.DynamicBody,false);
 		
 		// add some water
 		//Body water =  bodyFactory.makeBoxPolyBody(1, -8, 50, 25, BodyFactory.RUBBER, BodyType.StaticBody,false);
@@ -44,29 +51,61 @@ public class WertModel {
 		// make the water a sensor so it doesn't obstruct our player
 		//bodyFactory.makeAllFixturesSensors(water);
 		
-		// add a new rubber ball at position 1, 1
-		//bodyFactory.makeCirclePolyBody(1, 1, 2, BodyFactory.RUBBER, BodyType.DynamicBody,false);
+		// add a new TEST ball at position 1, 1
+		obj2 = bodyFactory.makeBoxPolyBody(0, -3, 1, 6, BodyFactory.TEST, BodyType.StaticBody, false);
 		
-		// add a new steel ball at position 4, 1
-		//bodyFactory.makeCirclePolyBody(4, 1, 2, BodyFactory.STEEL, BodyType.DynamicBody,false);
+		// add a new TEST ball at position 4, 1
+		obj1 = bodyFactory.makeBoxPolyBody(0, 3.5f, 4, 1, BodyFactory.TEST, BodyType.DynamicBody, false);
 		
+		/*
+		DistanceJointDef djd = new DistanceJointDef();
+		djd.bodyA = obj1;
+		djd.bodyB = obj2;
+		
+		djd.length = 3f;
+		djd.frequencyHz = 3;
+		djd.dampingRatio = 0.1f;
+		
+		DistanceJoint dj = (DistanceJoint) world.createJoint(djd);
+		*/
+		
+		RevoluteJointDef rjd = new RevoluteJointDef();
+		rjd.bodyA = obj2;
+		rjd.bodyB = obj1;
+		//rjd.collideConnected = false;
+		rjd.localAnchorA.set(0, 3);
+		rjd.localAnchorB.set(0,0);
+		
+		rjd.motorSpeed = 3.14f * 2;
+		rjd.maxMotorTorque = 100.0f;
+		rjd.enableMotor = true;
+		
+		RevoluteJoint joint = (RevoluteJoint) world.createJoint(rjd);
+		
+
 		// add a new stone at position -4,1
 		//bodyFactory.makeCirclePolyBody(-4, 1, 2, BodyFactory.STONE, BodyType.DynamicBody,false);
 	}
 	
+	
+	// THIS IS WHERE THE CONTROLLER AFFECTS THE BODIES
 	public void logicStep(float delta) {
+		
 		if(controller.left){
-			player.applyForceToCenter(-10, 0,true);
+			obj1.applyForceToCenter(-10, 0,true);
 		}
 		else if(controller.right){
-			player.applyForceToCenter(10, 0,true);
+			obj1.applyForceToCenter(10, 0,true);
 		}
 		else if(controller.up){
-			player.applyForceToCenter(0, 30,true);
+			obj1.applyForceToCenter(0, 30,true);
 		}
 		else if(controller.down){
-			player.applyForceToCenter(0, -10,true);
+			obj1.applyForceToCenter(0, -10,true);
 		}
+		
+		
+		
 		world.step(delta , 3, 3);
 	}
 	
@@ -80,7 +119,7 @@ public class WertModel {
         // add body to the world
         bodyDynamic = world.createBody(bodyDef);
         
-        // set the shape (here we use a box 50 meters wide, 1 meter tall )
+        // set the shape (here we use a box 1 meters wide, 1 meter tall )
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(1,1);
         
