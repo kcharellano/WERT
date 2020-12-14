@@ -5,6 +5,8 @@ import com.badlogic.gdx.InputProcessor;
 
 public class KeyboardController implements InputProcessor {
 	public boolean left, right, up, down;
+	
+	public boolean w, e, r, t;
 
 	// Activated when a key on the keyboard is pressed down
 	@Override
@@ -12,21 +14,37 @@ public class KeyboardController implements InputProcessor {
 	boolean keyProcessed = false;
 	switch (keycode) // switch code base on the variable keycode
         {
-	        case Keys.LEFT:  	// if keycode is the same as Keys.LEFT a.k.a 21
-	            left = true;	// do this
-	            keyProcessed = true;// we have reacted to a keypress 
+	        case Keys.LEFT: 	
+	            left = true;
+	            keyProcessed = true;
 	            break;
-	        case Keys.RIGHT: 	// if keycode is the same as Keys.LEFT a.k.a 22
-	            right = true;	// do this
-	            keyProcessed = true;// we have reacted to a keypress 
+	        case Keys.RIGHT:
+	            right = true;
+	            keyProcessed = true;
 	            break;
-	        case Keys.UP: 		// if keycode is the same as Keys.LEFT a.k.a 19
-	            up = true;		// do this
-	            keyProcessed = true;// we have reacted to a keypress 
+	        case Keys.UP:
+	            up = true;
+	            keyProcessed = true;
 	            break;
-	        case Keys.DOWN: 	// if keycode is the same as Keys.LEFT a.k.a 20
-	            down = true;	// do this
-	            keyProcessed = true;// we have reacted to a keypress
+	        case Keys.DOWN:
+	            down = true;
+	            keyProcessed = true;
+	            break;
+	        case Keys.W:
+	        	w = true;
+	        	keyProcessed = true;
+	        	break;
+	        case Keys.E:
+	        	e = true;
+	        	keyProcessed = true;
+	        	break;
+	        case Keys.R:
+	        	r = true;
+	        	keyProcessed = true;
+	        	break;
+	        case Keys.T:
+	        	t = true;
+	        	keyProcessed = true;
         }
 	return keyProcessed;	//  return our peyProcessed flag
 }
@@ -37,21 +55,37 @@ public class KeyboardController implements InputProcessor {
 	boolean keyProcessed = false;
 	switch (keycode) // switch code base on the variable keycode
         {
-	        case Keys.LEFT:  	// if keycode is the same as Keys.LEFT a.k.a 21
-	            left = false;	// do this
-	            keyProcessed = true;	// we have reacted to a keypress 
+	        case Keys.LEFT:  	
+	            left = false;	
+	            keyProcessed = true;	
 	            break;
-	        case Keys.RIGHT: 	// if keycode is the same as Keys.LEFT a.k.a 22
-	            right = false;	// do this
-	            keyProcessed = true;	// we have reacted to a keypress 
+	        case Keys.RIGHT: 	
+	            right = false;
+	            keyProcessed = true;
 	            break;
-	        case Keys.UP: 		// if keycode is the same as Keys.LEFT a.k.a 19
-	            up = false;		// do this
-	            keyProcessed = true;	// we have reacted to a keypress 
+	        case Keys.UP:
+	            up = false;
+	            keyProcessed = true;
 	            break;
-	        case Keys.DOWN: 	// if keycode is the same as Keys.LEFT a.k.a 20
-	            down = false;	// do this
-	            keyProcessed = true;	// we have reacted to a keypress
+	        case Keys.DOWN:
+	            down = false;
+	            keyProcessed = true;
+	            break;
+	        case Keys.W:
+	        	w = false;
+	        	keyProcessed = true;
+	        	break;
+	        case Keys.E:
+	        	e = false;
+	        	keyProcessed = true;
+	        	break;
+	        case Keys.R:
+	        	r = false;
+	        	keyProcessed = true;
+	        	break;
+	        case Keys.T:
+	        	t = false;
+	        	keyProcessed = true;
         }
 	return keyProcessed;	//  return our peyProcessed flag
 }

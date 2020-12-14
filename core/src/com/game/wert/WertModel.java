@@ -14,6 +14,9 @@ import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJoint;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.game.wert.controller.KeyboardController;
+import com.game.wert.players.ArtMan;
+
+import java.lang.Math;
 
 public class WertModel {
 	public World world;
@@ -27,37 +30,76 @@ public class WertModel {
 	private Body player;
 	private KeyboardController controller;
 	
-	private Body obj1;
-	private Body obj2;
+	private Body leftThigh;
+	private Body rightThigh;
+	
+	private float DEGTORADIANS = (float) Math.PI / 180; 
+	
+	private final float QUARTER = 0.25f;
+	private final float HALF = 0.50f;
+	
 	
 	public WertModel (KeyboardController controller) {
 		this.controller = controller;
 		world = new World(new Vector2(0, -10f), true);
 		world.setContactListener(new WertContactListener(this));
-		createFloor();
-		//createObject();
-		//createMovingObject();
-		
+
 		// get our body factory singleton and store it in bodyFactory
 		BodyFactory bodyFactory = BodyFactory.getInstance(world);
 		
-		// add a player
-		//player = bodyFactory.makeBoxPolyBody(1, 1, 2, 2, BodyFactory.TEST, BodyType.DynamicBody,false);
+		// make floor
+		bodyFactory.makeBoxPolyBody(0, -8, 40, 7, BodyFactory.STONE, BodyType.StaticBody, true);
 		
-		// add some water
-		//Body water =  bodyFactory.makeBoxPolyBody(1, -8, 50, 25, BodyFactory.RUBBER, BodyType.StaticBody,false);
-		//water.setUserData("IAMTHESEA");
+		//Body somebody = bodyFactory.makeBoxPolyBody(-2, -4, 1, 3, BodyFactory.WOOD, BodyType.KinematicBody, true);
+		//System.out.println(somebody.getAngle());
 		
-		// make the water a sensor so it doesn't obstruct our player
-		//bodyFactory.makeAllFixturesSensors(water);
+		/*
+		// create torso
+		Body torso = bodyFactory.makeBoxPolyBody(0, 0, 4, 6, BodyFactory.TEST, BodyType.DynamicBody, false);
 		
+		
+		// create left thigh
+		leftThigh = bodyFactory.makeBoxPolyBody(-2, -4, 1, 2, BodyFactory.TEST, BodyType.DynamicBody, false);
+		System.out.println(leftThigh.getAngle());
+		// create right thigh
+		rightThigh = bodyFactory.makeBoxPolyBody(2, -4, 1, 2, BodyFactory.TEST, BodyType.DynamicBody, false);
+		
+		// attach left thigh to torso
+		RevoluteJointDef ljd = new RevoluteJointDef();
+		ljd.bodyA = torso;
+		ljd.bodyB = leftThigh;
+		ljd.localAnchorA.set(-2, -3);
+		ljd.localAnchorB.set(0, 1);
+		ljd.enableLimit = true;
+		ljd.lowerAngle = -60 * DEGTORADIANS ;
+		ljd.upperAngle = 60 * DEGTORADIANS;
+		
+		RevoluteJoint leftJoint = (RevoluteJoint) world.createJoint(ljd);
+		
+		// attach left thigh to torso
+		RevoluteJointDef rjd = new RevoluteJointDef();
+		rjd.bodyA = torso;
+		rjd.bodyB = rightThigh;
+		rjd.localAnchorA.set(2, -3);
+		rjd.localAnchorB.set(0, 1);
+		rjd.enableLimit = true;
+		rjd.lowerAngle = -60 * DEGTORADIANS ;
+		rjd.upperAngle = 60 * DEGTORADIANS;
+		
+		RevoluteJoint rightJoint = (RevoluteJoint) world.createJoint(rjd);
+		*/
+		
+		
+		/*
 		// add a new TEST ball at position 1, 1
-		obj2 = bodyFactory.makeBoxPolyBody(0, -3, 1, 6, BodyFactory.TEST, BodyType.StaticBody, false);
+		obj2 = bodyFactory.makeBoxPolyBody(0, 0, 6, 6, BodyFactory.TEST, BodyType.DynamicBody, true);
 		
 		// add a new TEST ball at position 4, 1
 		obj1 = bodyFactory.makeBoxPolyBody(0, 3.5f, 4, 1, BodyFactory.TEST, BodyType.DynamicBody, false);
 		
-		/*
+		Body obj3 = bodyFactory.makeBoxPolyBody(0, 3.5f, 4, 1, BodyFactory.TEST, BodyType.DynamicBody, false);
+
+		
 		DistanceJointDef djd = new DistanceJointDef();
 		djd.bodyA = obj1;
 		djd.bodyB = obj2;
@@ -67,13 +109,12 @@ public class WertModel {
 		djd.dampingRatio = 0.1f;
 		
 		DistanceJoint dj = (DistanceJoint) world.createJoint(djd);
-		*/
 		
 		RevoluteJointDef rjd = new RevoluteJointDef();
 		rjd.bodyA = obj2;
 		rjd.bodyB = obj1;
 		//rjd.collideConnected = false;
-		rjd.localAnchorA.set(0, 3);
+		rjd.localAnchorA.set(3, 3);
 		rjd.localAnchorB.set(0,0);
 		
 		rjd.motorSpeed = 3.14f * 2;
@@ -82,15 +123,36 @@ public class WertModel {
 		
 		RevoluteJoint joint = (RevoluteJoint) world.createJoint(rjd);
 		
+		RevoluteJointDef temp = new RevoluteJointDef();
+		temp.bodyA = obj2;
+		temp.bodyB = obj3;
+		
+		temp.localAnchorA.set(-3, 3);
+		temp.localAnchorB.set(0,0);
+		
+		temp.motorSpeed = 3.14f * 2;
+		temp.maxMotorTorque = 100.0f;
+		temp.enableMotor = true;
+		
+		RevoluteJoint tempJoint =  (RevoluteJoint) world.createJoint(temp);
+		*/
+		ArtMan player = new ArtMan(world, 3f, 4f);
+		player.makeArtMan();
 
-		// add a new stone at position -4,1
-		//bodyFactory.makeCirclePolyBody(-4, 1, 2, BodyFactory.STONE, BodyType.DynamicBody,false);
+	}
+	
+	private Vector2[] makeVectorArray(float ...fs) {
+		Vector2[] varr = new Vector2[(int) fs.length/2];
+		for(int i=0, j=0; i < fs.length; i+=2, j+=1) {
+			varr[j] = new Vector2(fs[i], fs[i+1]);
+		}
+		return varr;
 	}
 	
 	
 	// THIS IS WHERE THE CONTROLLER AFFECTS THE BODIES
 	public void logicStep(float delta) {
-		
+		/*
 		if(controller.left){
 			obj1.applyForceToCenter(-10, 0,true);
 		}
@@ -103,9 +165,17 @@ public class WertModel {
 		else if(controller.down){
 			obj1.applyForceToCenter(0, -10,true);
 		}
-		
-		
-		
+		*/
+		float force = 500;
+		if(controller.w) {
+			leftThigh.applyForceToCenter(force, 0, true);
+			rightThigh.applyForceToCenter(-force, 0, true);
+		}
+		else if(controller.e) {
+			leftThigh.applyForceToCenter(-force, 0, true);
+			rightThigh.applyForceToCenter(force, 0, true);
+		}
+
 		world.step(delta , 3, 3);
 	}
 	

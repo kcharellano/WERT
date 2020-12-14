@@ -41,8 +41,8 @@ public class BodyFactory {
 	static public FixtureDef makeFixture(int material, Shape shape){
 		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.shape = shape;
-		//fixtureDef.filter.categoryBits = 0x0002;
-		//fixtureDef.filter.maskBits = 0x0004;
+		fixtureDef.filter.categoryBits = 0x0002;
+		fixtureDef.filter.maskBits = 0x0001;
 			
 		switch(material){
 		case STEEL:
@@ -121,6 +121,8 @@ public class BodyFactory {
 		boxBodyDef.position.x = posx;
 		boxBodyDef.position.y = posy;
 		boxBodyDef.fixedRotation = fixedRotation;
+		//boxBodyDef.gravityScale = 0.0f;
+		//boxBodyDef.angularDamping = 0.0f;
 			
 		//create the body to attach said definition
 		Body boxBody = world.createBody(boxBodyDef);
@@ -155,4 +157,5 @@ public class BodyFactory {
 			
 		return boxBody;
 	}
+
 }
