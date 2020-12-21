@@ -35,8 +35,7 @@ public class WertModel {
 	
 	private float DEGTORADIANS = (float) Math.PI / 180; 
 	
-	private final float QUARTER = 0.25f;
-	private final float HALF = 0.50f;
+	private Body[] bodyParts;
 	
 	
 	public WertModel (KeyboardController controller) {
@@ -137,7 +136,10 @@ public class WertModel {
 		RevoluteJoint tempJoint =  (RevoluteJoint) world.createJoint(temp);
 		*/
 		ArtMan player = new ArtMan(world, 3f, 4f);
-		player.makeArtMan();
+		bodyParts = player.makeArtMan();
+		//TestJoints tj = new TestJoints(world);
+		//bodyParts = tj.createJoints();
+		
 
 	}
 	
@@ -152,20 +154,22 @@ public class WertModel {
 	
 	// THIS IS WHERE THE CONTROLLER AFFECTS THE BODIES
 	public void logicStep(float delta) {
-		/*
+		
+		float force = 300;
 		if(controller.left){
-			obj1.applyForceToCenter(-10, 0,true);
+			bodyParts[1].applyForceToCenter(-force, 0,true);
 		}
 		else if(controller.right){
-			obj1.applyForceToCenter(10, 0,true);
+			bodyParts[1].applyForceToCenter(force, 0,true);
 		}
 		else if(controller.up){
-			obj1.applyForceToCenter(0, 30,true);
+			bodyParts[1].applyForceToCenter(0, force,true);
 		}
 		else if(controller.down){
-			obj1.applyForceToCenter(0, -10,true);
+			bodyParts[1].applyForceToCenter(0, -force,true);
 		}
-		*/
+		
+		/*
 		float force = 500;
 		if(controller.w) {
 			leftThigh.applyForceToCenter(force, 0, true);
@@ -175,6 +179,7 @@ public class WertModel {
 			leftThigh.applyForceToCenter(-force, 0, true);
 			rightThigh.applyForceToCenter(force, 0, true);
 		}
+		*/
 
 		world.step(delta , 3, 3);
 	}
