@@ -92,23 +92,35 @@ public class Timmy {
 		bodyPartConnector.connectRevolute(rightCalf, rightFoot, new Vector2(0, -0.9f*rightCalfData.halfHeight), new Vector2(-0.9f*rightFootData.halfHeight, 0), true, -60, 45);
 		
 		// right arm
-		//Body leftTorsoJoint = makeJoint()
-
+		Body rightShoulder = makeJoint(-0.0525f, -3.5f);
+		bodyPartConnector.connectWeld(torso, rightShoulder, new Vector2(-0.7f*torsoData.halfWidth, 0.7f*torsoData.halfHeight),  new Vector2(0, 0));
 		
-
-		//bodyPartConnector.
-		//shoulder
-		//makeJoint(0, -3.6f);
-		//knee
-		//makeJoint(0, -8f);
-		// ankle
-		//makeJoint(-0.0525f*unit, -9.7f);
+		Body rightBicep = makeBicep(-0.0525f, -4.2f);
+		BodyData rightBicepData = (BodyData) rightBicep.getUserData();
+		bodyPartConnector.connectRevolute(torso, rightBicep, new Vector2(-0.7f*torsoData.halfWidth, 0.7f*torsoData.halfHeight),  new Vector2(0, rightBicepData.halfHeight), true, -90, 180);
 		
-		//makeThigh(0.0325f, -7.1f);
-		//makeCalf(-0.0325f, -8.8f);
-		//makeFoot(0.002f, -9.9f);
-		//makeJoint(0.0525f*unit, -3.6f);
-		//makeJoint(-0.0525f*unit, -3.6f);
+		Body rightElbow = makeJoint(-0.0525f, -5);
+		bodyPartConnector.connectWeld(rightBicep, rightElbow, new Vector2(0, -0.9f*rightBicepData.halfHeight),  new Vector2(0, 0));
+		
+		Body rightForearm = makeForearm(-0.0525f, -5.5f);
+		BodyData rightForearmData = (BodyData) rightForearm.getUserData();
+		bodyPartConnector.connectRevolute(rightBicep, rightForearm, new Vector2(0, -0.9f*rightBicepData.halfHeight),  new Vector2(0, 0.9f*rightForearmData.halfHeight), true, 0, 150);
+		
+		// left arm
+		Body leftShoulder = makeJoint(0.0525f, -3.5f);
+		bodyPartConnector.connectWeld(torso, leftShoulder, new Vector2(0.7f*torsoData.halfWidth, 0.7f*torsoData.halfHeight),  new Vector2(0, 0));
+		
+		Body leftBicep = makeBicep(0.0525f, -4.2f);
+		BodyData leftBicepData = (BodyData) leftBicep.getUserData();
+		bodyPartConnector.connectRevolute(torso, leftBicep, new Vector2(0.7f*torsoData.halfWidth, 0.7f*torsoData.halfHeight),  new Vector2(0, leftBicepData.halfHeight), true, -90, 180);
+
+		Body leftElbow = makeJoint(0.0525f, -5);
+		bodyPartConnector.connectWeld(leftBicep, leftElbow, new Vector2(0, -0.9f*leftBicepData.halfHeight),  new Vector2(0, 0));
+		
+		Body leftForearm = makeForearm(0.0525f, -5.5f);
+		BodyData leftForearmData = (BodyData) leftForearm.getUserData();
+		bodyPartConnector.connectRevolute(leftBicep, leftForearm, new Vector2(0, -0.9f*leftBicepData.halfHeight),  new Vector2(0, 0.9f*leftForearmData.halfHeight), true, 0, 150);
+
 		Body[] bodyArr = {neck, head};
 		return bodyArr;
 	}
@@ -158,6 +170,18 @@ public class Timmy {
 	private Body makeCalf(float posx, float posy) {
 		Body body =  bodyPartFactory.makeBoxBody(posx, posy, 0.1f * unit, unit*1.8f, lightFlesh, bodyType, CollisionGroups.PLAYER, CollisionGroups.OTHER, false);
 		body.setUserData(new BodyData(0.1f*unit, unit*1.8f));
+		return body;
+	}
+	
+	private Body makeBicep(float posx, float posy) {
+		Body body =  bodyPartFactory.makeBoxBody(posx, posy, 0.1f * unit, unit*1.4f, lightFlesh, bodyType, CollisionGroups.PLAYER, CollisionGroups.OTHER, false);
+		body.setUserData(new BodyData(0.1f*unit, unit*1.4f));
+		return body;
+	}
+	
+	private Body makeForearm(float posx, float posy) {
+		Body body =  bodyPartFactory.makeBoxBody(posx, posy, 0.1f * unit, unit*1.1f, lightFlesh, bodyType, CollisionGroups.PLAYER, CollisionGroups.OTHER, false);
+		body.setUserData(new BodyData(0.1f*unit, unit*1.1f));
 		return body;
 	}
 	
