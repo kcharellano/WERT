@@ -38,6 +38,7 @@ public class WertContactListener implements  ContactListener {
 		System.out.println("Contact");
 		Fixture fa = contact.getFixtureA();
 		Fixture fb = contact.getFixtureB();
+		/*
 		if(fa.getBody().getUserData() == "IAMTHESEA"){
 			parent.isSwimming = false;
 			return;
@@ -46,6 +47,7 @@ public class WertContactListener implements  ContactListener {
 			parent.isSwimming = false;
 			return;
 		}
+		*/
 	}
 
 	@Override

@@ -5,13 +5,9 @@ import java.util.HashMap;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Shape;
 
-public class FixtureFactory {
+public class FixtureDefFactory {
 	public static final int WOOD = 0;
 	public static final int STONE = 1;
-	
-	public FixtureFactory() {
-		//TODO
-	}
 	
 	/**
 	 * @param material Predefined material properties
@@ -20,11 +16,11 @@ public class FixtureFactory {
 	 * @param collideBits Collide with fixtures in this group
 	 * @return fixture definition
 	 */
-	public FixtureDef makeFixture(int material, Shape shape, byte ignoreBits, byte collideBits) {
+	public static FixtureDef makeFixture(int material, Shape shape, int ignoreBits, int collideBits) {
 		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.shape = shape;
-		fixtureDef.filter.categoryBits = ignoreBits;
-		fixtureDef.filter.maskBits = collideBits;
+		fixtureDef.filter.categoryBits = (short) ignoreBits;
+		fixtureDef.filter.maskBits = (short) collideBits;
 		
 		switch(material) {
 		case WOOD:
@@ -49,11 +45,11 @@ public class FixtureFactory {
 	 * @param collideBits Collide with fixtures in this group 
 	 * @return fixture definition
 	 */
-	public FixtureDef makeFixture(HashMap<String, Float> properties, Shape shape, byte ignoreBits, byte collideBits) {
+	public static FixtureDef makeFixture(HashMap<String, Float> properties, Shape shape, int ignoreBits, int collideBits) {
 		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.shape = shape;
-		fixtureDef.filter.categoryBits = ignoreBits;
-		fixtureDef.filter.maskBits = collideBits;
+		fixtureDef.filter.categoryBits = (short) ignoreBits;
+		fixtureDef.filter.maskBits = (short) collideBits;
 		fixtureDef.density = properties.get("density");
 		fixtureDef.friction = properties.get("friction");
 		fixtureDef.restitution = properties.get("restitution");

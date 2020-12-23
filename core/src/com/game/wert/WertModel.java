@@ -15,128 +15,48 @@ import com.badlogic.gdx.physics.box2d.joints.RevoluteJoint;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.game.wert.controller.KeyboardController;
 import com.game.wert.players.ArtMan;
+import com.game.wert.players.Timmy;
 
 import java.lang.Math;
 
 public class WertModel {
 	public World world;
-	public boolean isSwimming = false;
 	
+	private BodyPartFactory bpf;
 	private Box2DDebugRenderer debugRenderer;
 	private OrthographicCamera camera;
-	private Body bodyDynamic;
-	private Body bodyStatic;
-	private Body bodyKinematic;
-	private Body player;
 	private KeyboardController controller;
-	
-	private Body leftThigh;
-	private Body rightThigh;
-	
-	private float DEGTORADIANS = (float) Math.PI / 180; 
 	
 	private Body[] bodyParts;
 	
 	
 	public WertModel (KeyboardController controller) {
 		this.controller = controller;
-		world = new World(new Vector2(0, -10f), true);
+		world = new World(new Vector2(0, -9.8f), true);
 		world.setContactListener(new WertContactListener(this));
-
-		// get our body factory singleton and store it in bodyFactory
-		BodyFactory bodyFactory = BodyFactory.getInstance(world);
-		
-		// make floor
-		bodyFactory.makeBoxPolyBody(0, -8, 40, 7, BodyFactory.STONE, BodyType.StaticBody, true);
-		
-		//Body somebody = bodyFactory.makeBoxPolyBody(-2, -4, 1, 3, BodyFactory.WOOD, BodyType.KinematicBody, true);
-		//System.out.println(somebody.getAngle());
-		
+		bpf = new BodyPartFactory(world);
+		// create floor
+		Body floor = bpf.makeBoxBody(0, -15, 50, 10, FixtureDefFactory.STONE, BodyType.StaticBody, CollisionGroups.OTHER, CollisionGroups.PLAYER);	
+		float h = 8;
+		float unit = h/8;
+		//stick
+		//bpf.makeBoxBody(0, -6, 0.01f, h, FixtureDefFactory.WOOD, BodyType.StaticBody, CollisionGroups.PLAYER, CollisionGroups.OTHER);
+		//bar
 		/*
-		// create torso
-		Body torso = bodyFactory.makeBoxPolyBody(0, 0, 4, 6, BodyFactory.TEST, BodyType.DynamicBody, false);
-		
-		
-		// create left thigh
-		leftThigh = bodyFactory.makeBoxPolyBody(-2, -4, 1, 2, BodyFactory.TEST, BodyType.DynamicBody, false);
-		System.out.println(leftThigh.getAngle());
-		// create right thigh
-		rightThigh = bodyFactory.makeBoxPolyBody(2, -4, 1, 2, BodyFactory.TEST, BodyType.DynamicBody, false);
-		
-		// attach left thigh to torso
-		RevoluteJointDef ljd = new RevoluteJointDef();
-		ljd.bodyA = torso;
-		ljd.bodyB = leftThigh;
-		ljd.localAnchorA.set(-2, -3);
-		ljd.localAnchorB.set(0, 1);
-		ljd.enableLimit = true;
-		ljd.lowerAngle = -60 * DEGTORADIANS ;
-		ljd.upperAngle = 60 * DEGTORADIANS;
-		
-		RevoluteJoint leftJoint = (RevoluteJoint) world.createJoint(ljd);
-		
-		// attach left thigh to torso
-		RevoluteJointDef rjd = new RevoluteJointDef();
-		rjd.bodyA = torso;
-		rjd.bodyB = rightThigh;
-		rjd.localAnchorA.set(2, -3);
-		rjd.localAnchorB.set(0, 1);
-		rjd.enableLimit = true;
-		rjd.lowerAngle = -60 * DEGTORADIANS ;
-		rjd.upperAngle = 60 * DEGTORADIANS;
-		
-		RevoluteJoint rightJoint = (RevoluteJoint) world.createJoint(rjd);
+		bpf.makeBoxBody(0, -2, 1, 0.01f, FixtureDefFactory.WOOD, BodyType.StaticBody, CollisionGroups.OTHER, CollisionGroups.PLAYER);
+		bpf.makeBoxBody(0, -3, 1, 0.01f, FixtureDefFactory.WOOD, BodyType.StaticBody, CollisionGroups.OTHER, CollisionGroups.PLAYER);
+		bpf.makeBoxBody(0, -4, 1, 0.01f, FixtureDefFactory.WOOD, BodyType.StaticBody, CollisionGroups.OTHER, CollisionGroups.PLAYER);
+		bpf.makeBoxBody(0, -5, 1, 0.01f, FixtureDefFactory.WOOD, BodyType.StaticBody, CollisionGroups.OTHER, CollisionGroups.PLAYER);
+		bpf.makeBoxBody(0, -6, 1, 0.01f, FixtureDefFactory.WOOD, BodyType.StaticBody, CollisionGroups.OTHER, CollisionGroups.PLAYER);
+		bpf.makeBoxBody(0, -7, 1, 0.01f, FixtureDefFactory.WOOD, BodyType.StaticBody, CollisionGroups.OTHER, CollisionGroups.PLAYER);
+		bpf.makeBoxBody(0, -8, 1, 0.01f, FixtureDefFactory.WOOD, BodyType.StaticBody, CollisionGroups.OTHER, CollisionGroups.PLAYER);
+		bpf.makeBoxBody(0, -9, 1, 0.01f, FixtureDefFactory.WOOD, BodyType.StaticBody, CollisionGroups.OTHER, CollisionGroups.PLAYER);
+		bpf.makeBoxBody(0, -10, 1, 0.01f, FixtureDefFactory.WOOD, BodyType.StaticBody, CollisionGroups.OTHER, CollisionGroups.PLAYER);
 		*/
-		
-		
-		/*
-		// add a new TEST ball at position 1, 1
-		obj2 = bodyFactory.makeBoxPolyBody(0, 0, 6, 6, BodyFactory.TEST, BodyType.DynamicBody, true);
-		
-		// add a new TEST ball at position 4, 1
-		obj1 = bodyFactory.makeBoxPolyBody(0, 3.5f, 4, 1, BodyFactory.TEST, BodyType.DynamicBody, false);
-		
-		Body obj3 = bodyFactory.makeBoxPolyBody(0, 3.5f, 4, 1, BodyFactory.TEST, BodyType.DynamicBody, false);
-
-		
-		DistanceJointDef djd = new DistanceJointDef();
-		djd.bodyA = obj1;
-		djd.bodyB = obj2;
-		
-		djd.length = 3f;
-		djd.frequencyHz = 3;
-		djd.dampingRatio = 0.1f;
-		
-		DistanceJoint dj = (DistanceJoint) world.createJoint(djd);
-		
-		RevoluteJointDef rjd = new RevoluteJointDef();
-		rjd.bodyA = obj2;
-		rjd.bodyB = obj1;
-		//rjd.collideConnected = false;
-		rjd.localAnchorA.set(3, 3);
-		rjd.localAnchorB.set(0,0);
-		
-		rjd.motorSpeed = 3.14f * 2;
-		rjd.maxMotorTorque = 100.0f;
-		rjd.enableMotor = true;
-		
-		RevoluteJoint joint = (RevoluteJoint) world.createJoint(rjd);
-		
-		RevoluteJointDef temp = new RevoluteJointDef();
-		temp.bodyA = obj2;
-		temp.bodyB = obj3;
-		
-		temp.localAnchorA.set(-3, 3);
-		temp.localAnchorB.set(0,0);
-		
-		temp.motorSpeed = 3.14f * 2;
-		temp.maxMotorTorque = 100.0f;
-		temp.enableMotor = true;
-		
-		RevoluteJoint tempJoint =  (RevoluteJoint) world.createJoint(temp);
-		*/
-		ArtMan player = new ArtMan(world, 3f, 4f);
-		bodyParts = player.makeArtMan();
+		Timmy player = new Timmy(world, h);
+		bodyParts = player.makeTimmy();
+		//ArtMan player = new ArtMan(world, 3f, 4f);
+		//dyParts = player.makeArtMan();
 		//TestJoints tj = new TestJoints(world);
 		//bodyParts = tj.createJoints();
 		
@@ -155,7 +75,7 @@ public class WertModel {
 	// THIS IS WHERE THE CONTROLLER AFFECTS THE BODIES
 	public void logicStep(float delta) {
 		
-		float force = 300;
+		float force = 1;
 		if(controller.left){
 			bodyParts[1].applyForceToCenter(-force, 0,true);
 		}
@@ -184,79 +104,4 @@ public class WertModel {
 		world.step(delta , 3, 3);
 	}
 	
-	//dynamic body
-	private void createObject() {
-		// create a new body definition with type and location
-		BodyDef bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.position.set(0,0);
-        
-        // add body to the world
-        bodyDynamic = world.createBody(bodyDef);
-        
-        // set the shape (here we use a box 1 meters wide, 1 meter tall )
-        PolygonShape shape = new PolygonShape();
-        shape.setAsBox(1,1);
-        
-        // set the properties of the object ( shape, weight, restitution(bouncyness)
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape = shape;
-        fixtureDef.density = 1f;
-        
-        // create the physical object in our body)
-        // without this our body would just be data in the world
-        bodyDynamic.createFixture(shape, 0.0f);
-        
-        // we no longer use the shape object here so dispose of it.
-        shape.dispose();
-	}
-	
-	//static body
-	private void createFloor() {
-		// create a new body definition (type and location)
-		BodyDef bodyDef = new BodyDef();
-		bodyDef.type = BodyDef.BodyType.StaticBody;
-		bodyDef.position.set(0, -10);
-		// add it to the world
-		bodyStatic = world.createBody(bodyDef);
-		// set the shape (here we use a box 50 meters wide, 1 meter tall )
-		PolygonShape shape = new PolygonShape();
-		shape.setAsBox(50, 3);
-		// create the physical object in our body)
-		// without this our body would just be data in the world
-		bodyStatic.createFixture(shape, 0.0f);
-		// we no longer use the shape object here so dispose of it.
-		shape.dispose();
-	}
-	
-	// kinematic body
-	private void createMovingObject(){
-		
-	    //create a new body definition (type and location)
-	    BodyDef bodyDef = new BodyDef();
-	    bodyDef.type = BodyDef.BodyType.KinematicBody;
-	    bodyDef.position.set(0,-12);
-
-
-	    // add it to the world
-	    bodyKinematic = world.createBody(bodyDef);
-
-	    // set the shape (here we use a box 50 meters wide, 1 meter tall )
-	    PolygonShape shape = new PolygonShape();
-	    shape.setAsBox(1,1);
-
-	    // set the properties of the object ( shape, weight, restitution(bouncyness)
-	    FixtureDef fixtureDef = new FixtureDef();
-	    fixtureDef.shape = shape;
-	    fixtureDef.density = 1f;
-
-	    // create the physical object in our body)
-	    // without this our body would just be data in the world
-	    bodyKinematic.createFixture(shape, 0.0f);
-
-	    // we no longer use the shape object here so dispose of it.
-	    shape.dispose();
-	    
-	    bodyKinematic.setLinearVelocity(0, 0.75f);
-	}
 }
