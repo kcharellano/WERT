@@ -26,7 +26,7 @@ public class WertModel {
 	private Box2DDebugRenderer debugRenderer;
 	private OrthographicCamera camera;
 	private KeyboardController controller;
-	
+	private float DEGTORADIANS = (float) Math.PI / 180; 
 	private Body[] bodyParts;
 	
 	
@@ -38,7 +38,6 @@ public class WertModel {
 		// create floor
 		Body floor = bpf.makeBoxBody(0, -15, 50, 10, FixtureDefFactory.STONE, BodyType.StaticBody, CollisionGroups.OTHER, CollisionGroups.PLAYER);	
 		float h = 8;
-		float unit = h/8;
 		//stick
 		//bpf.makeBoxBody(0, -6, 0.01f, h, FixtureDefFactory.WOOD, BodyType.StaticBody, CollisionGroups.PLAYER, CollisionGroups.OTHER);
 		//bar
@@ -53,8 +52,9 @@ public class WertModel {
 		bpf.makeBoxBody(0, -9, 1, 0.01f, FixtureDefFactory.WOOD, BodyType.StaticBody, CollisionGroups.OTHER, CollisionGroups.PLAYER);
 		bpf.makeBoxBody(0, -10, 1, 0.01f, FixtureDefFactory.WOOD, BodyType.StaticBody, CollisionGroups.OTHER, CollisionGroups.PLAYER);
 		*/
+		//bpf.makeBoxBody(0, 0, 1, 3, FixtureDefFactory.WOOD, BodyType.StaticBody, CollisionGroups.PLAYER, CollisionGroups.OTHER, false, 45f * DEGTORADIANS);
 		Timmy player = new Timmy(world, h);
-		bodyParts = player.makeTimmy();
+		bodyParts = player.makeTimmy(new Vector2(0,0));
 		//ArtMan player = new ArtMan(world, 3f, 4f);
 		//dyParts = player.makeArtMan();
 		//TestJoints tj = new TestJoints(world);
@@ -77,16 +77,16 @@ public class WertModel {
 		
 		float force = 1;
 		if(controller.left){
-			bodyParts[1].applyForceToCenter(-force, 0,true);
+			bodyParts[0].applyForceToCenter(-force, 0,true);
 		}
 		else if(controller.right){
-			bodyParts[1].applyForceToCenter(force, 0,true);
+			bodyParts[0].applyForceToCenter(force, 0,true);
 		}
 		else if(controller.up){
-			bodyParts[1].applyForceToCenter(0, force,true);
+			bodyParts[0].applyForceToCenter(0, force,true);
 		}
 		else if(controller.down){
-			bodyParts[1].applyForceToCenter(0, -force,true);
+			bodyParts[0].applyForceToCenter(0, -force,true);
 		}
 		
 		/*

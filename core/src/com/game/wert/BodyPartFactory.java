@@ -18,17 +18,6 @@ public class BodyPartFactory {
 		this.world = world;
 	}
 	
-	/**
-	 * 
-	 * @param posx
-	 * @param posy
-	 * @param radius
-	 * @param properties material properties for fixture(i.e density, restitution, friction)
-	 * @param bodyType Dynamic, Static of Kinematic
-	 * @param ignoreBits
-	 * @param collideBits
-	 * @return
-	 */
 	public Body makeCircleBody(float posx, float posy, float radius, HashMap<String, Float> properties, BodyType bodyType, int ignoreBits, int collideBits, boolean fixed) {
 		// make shape
 		CircleShape circleShape = new CircleShape();
@@ -41,75 +30,49 @@ public class BodyPartFactory {
 		return circleBody;
 	}
 	
-	/**
-	 * 
-	 * @param posx
-	 * @param posy
-	 * @param width
-	 * @param height
-	 * @param properties material properties for fixture(i.e density, restitution, friction)
-	 * @param bodyType Dynamic, Static of Kinematic
-	 * @param ignoreBits
-	 * @param collideBits
-	 * @return
-	 */
-	public Body makeBoxBody(float posx, float posy, float width, float height,  HashMap<String, Float> properties, BodyType bodyType, int ignoreBits, int collideBits) {
-		return makeBoxBody(posx, posy, width, height, properties, bodyType, ignoreBits, collideBits, true);
-	}
-	
-	// for custom rotation
-	public Body makeBoxBody(float posx, float posy, float width, float height,  HashMap<String, Float> properties, BodyType bodyType, int ignoreBits, int collideBits, boolean rotation) {
-		//make shape
-		PolygonShape boxShape = new PolygonShape();
-		boxShape.setAsBox(width/2, height/2);
-		//make body
-		Body boxBody = world.createBody(makeBodyDef(bodyType, posx, posy, rotation));
-		//make fixture
-		boxBody.createFixture(FixtureDefFactory.makeFixture(properties, boxShape, ignoreBits, collideBits));
-		boxShape.dispose();
-		return boxBody;
-	}
-	
-	//for no rotation but with preset materials
+	//for default rotation but with preset materials
 	public Body makeBoxBody(float posx, float posy, float width, float height, int material, BodyType bodyType, int ignoreBits, int collideBits) {
 		//make shape
 		PolygonShape boxShape = new PolygonShape();
 		boxShape.setAsBox(width/2, height/2);
 		//make body
-		Body boxBody = world.createBody(makeBodyDef(bodyType, posx, posy));
+		Body boxBody = world.createBody(makeBodyDef(bodyType, posx, posy, false));
 		//make fixture
 		boxBody.createFixture(FixtureDefFactory.makeFixture(material, boxShape, ignoreBits, collideBits));
 		boxShape.dispose();
 		return boxBody;
 	}
 	
-	/**
-	 * 
-	 * @param posx
-	 * @param posy
-	 * @param vertices
-	 * @param properties material properties for fixture(i.e density, restitution, friction)
-	 * @param bodyType Dynamic, Static of Kinematic
-	 * @param ignoreBits
-	 * @param collideBits
-	 * @return
-	 */
+	// for custom rotation, custom fixture material properties and custom starting angle
+	public Body makeBoxBody(float posx, float posy, float width, float height, HashMap<String, Float> properties, BodyType bodyType, int ignoreBits, int collideBits, boolean rotation, float angle) {
+		//make shape
+		PolygonShape boxShape = new PolygonShape();
+		boxShape.setAsBox(width/2, height/2);
+		//make body
+		Body boxBody = world.createBody(makeBodyDef(bodyType, posx, posy, rotation));
+		// set starting angle
+		boxBody.setTransform(boxBody.getPosition(), angle);
+		//make fixture
+		boxBody.createFixture(FixtureDefFactory.makeFixture(properties, boxShape, ignoreBits, collideBits));
+		boxShape.dispose();
+		return boxBody;
+	}
+	
+	// for default rotation but with custom fixture material properties
 	public Body makePolyBody(float posx, float posy, Vector2[] vertices, HashMap<String, Float> properties, BodyType bodyType, int ignoreBits, int collideBits) {
 		//make shape
 		PolygonShape polyShape = new PolygonShape();
 		polyShape.set(vertices);
 		//make body
-		Body polyBody = world.createBody(makeBodyDef(bodyType, posx, posy));
+		Body polyBody = world.createBody(makeBodyDef(bodyType, posx, posy, false));
 		//make fixture
 		polyBody.createFixture(FixtureDefFactory.makeFixture(properties, polyShape, ignoreBits, collideBits));
 		polyShape.dispose();
 		return polyBody;
 	}
 	
-	private BodyDef makeBodyDef(BodyType bodyType, float posx, float posy) {
-		return makeBodyDef(bodyType, posx, posy, true);
-	}
-	
+
+	// for custom rotation
 	private BodyDef makeBodyDef(BodyType bodyType, float posx, float posy, boolean rotation) {
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = bodyType;

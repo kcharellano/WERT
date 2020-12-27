@@ -34,163 +34,145 @@ public class Timmy {
 		this.unit = height/8;
 	}
 	
-	public Body[] makeTimmy() {
-		Body head = makeHead(0, -2.5f);
-		BodyData headData = (BodyData) head.getUserData();
-		Body neck = makeNeck(0, -3.2f);
-		BodyData neckData = (BodyData) neck.getUserData();
-		bodyPartConnector.connectWeld(head, neck, new Vector2(0, 0.95f*-(headData.halfHeight)), new Vector2(0, 0.95f*neckData.halfHeight));
+	public Body[] makeTimmy(Vector2 origin) {
+		Body torso = buildTorso(origin);
+		Body head = attachHead(origin, torso);
+		Body pelvis = attachPelvis(origin, torso);
+		Body[] leftLeg = attachLeg(origin, pelvis, -1);
+		Body[] rightLef = attachLeg(origin, pelvis, 1);
 		
-		Body torso = makeTorso(0, -4f);
-		BodyData torsoData = (BodyData) torso.getUserData();
-		bodyPartConnector.connectWeld(neck, torso, new Vector2(0, 0.95f*-(neckData.halfHeight)), new Vector2(0, 0.95f*torsoData.halfHeight));
-		
-		Body lowerSpine = makeLowerSpine(0, -4.8f);
-		BodyData lowerSpineData = (BodyData) lowerSpine.getUserData();
-		bodyPartConnector.connectWeld(torso, lowerSpine, new Vector2(0, 0.95f*-(torsoData.halfHeight)), new Vector2(0, 0.95f*lowerSpineData.halfHeight));
-		
-		Body pelvis = makePelvis(0, -5.5f);
-		BodyData pelvisData = (BodyData) pelvis.getUserData();
-		bodyPartConnector.connectWeld(lowerSpine, pelvis, new Vector2(0, 0.95f*-(lowerSpineData.halfHeight)), new Vector2(0, 0.95f*pelvisData.halfHeight));
-		
-		// left leg
-		Body leftPelvisJoint = makeJoint(-0.0525f, -5.75f);
-		bodyPartConnector.connectWeld(pelvis, leftPelvisJoint, new Vector2(-0.75f*pelvisData.halfWidth, 0.95f*-(pelvisData.halfHeight)), new Vector2(0, 0));
-
-		Body leftThigh = makeThigh(-0.0325f, -7.1f);
-		BodyData leftThighData = (BodyData) leftThigh.getUserData();
-		bodyPartConnector.connectRevolute(pelvis, leftThigh, new Vector2(-0.75f*pelvisData.halfWidth, 0.95f*-(pelvisData.halfHeight)), new Vector2(0, 0.95f*(leftThighData.halfHeight)), true, -60, 60);
-		
-		Body leftKneeCap = makeJoint(0, -8f);
-		bodyPartConnector.connectRevolute(leftThigh, leftKneeCap, new Vector2(0, 0.9f*-(leftThighData.halfHeight)), new Vector2(0, 0), false, 0, 0);
-		
-		Body leftCalf = makeCalf(-0.0325f, -8.8f);
-		BodyData leftCalfData = (BodyData) leftCalf.getUserData();
-		bodyPartConnector.connectRevolute(leftThigh, leftCalf, new Vector2(0, 0.9f*-(leftThighData.halfHeight)), new Vector2(0, 0.9f*leftCalfData.halfHeight), true, -150f, 0);
-		
-		Body leftFoot = makeFoot(-0.02f, -9.9f);
-		BodyData leftFootData = (BodyData) leftFoot.getUserData();
-		bodyPartConnector.connectRevolute(leftCalf, leftFoot, new Vector2(0, -0.9f*leftCalfData.halfHeight), new Vector2(-0.9f*leftFootData.halfHeight, 0), true, -60, 45);
-		
-		// right leg
-		Body rightPelvisJoint = makeJoint(0.0525f, -5.75f);
-		bodyPartConnector.connectWeld(pelvis, rightPelvisJoint, new Vector2(0.75f*pelvisData.halfWidth, 0.95f*-(pelvisData.halfHeight)), new Vector2(0, 0));
-		
-		Body rightThigh = makeThigh(0.0325f, -7.1f);
-		BodyData rightThighData = (BodyData) rightThigh.getUserData();
-		bodyPartConnector.connectRevolute(pelvis, rightThigh, new Vector2(0.75f*pelvisData.halfWidth, 0.95f*-(pelvisData.halfHeight)), new Vector2(0, 0.95f*(rightThighData.halfHeight)), true, -60, 60);
-
-		Body rightKneeCap = makeJoint(0, -8f);
-		bodyPartConnector.connectRevolute(rightThigh, rightKneeCap, new Vector2(0, 0.9f*-(rightThighData.halfHeight)), new Vector2(0, 0), false, 0, 0);
-		
-		Body rightCalf = makeCalf(0.0325f, -8.8f);
-		BodyData rightCalfData = (BodyData) leftCalf.getUserData();
-		bodyPartConnector.connectRevolute(rightThigh, rightCalf, new Vector2(0, 0.9f*-(rightThighData.halfHeight)), new Vector2(0, 0.9f*rightCalfData.halfHeight), true, -150f, 0);
-		
-		Body rightFoot = makeFoot(0.02f, -9.9f);
-		BodyData rightFootData = (BodyData) leftFoot.getUserData();
-		bodyPartConnector.connectRevolute(rightCalf, rightFoot, new Vector2(0, -0.9f*rightCalfData.halfHeight), new Vector2(-0.9f*rightFootData.halfHeight, 0), true, -60, 45);
-		
-		// right arm
-		Body rightShoulder = makeJoint(-0.0525f, -3.5f);
-		bodyPartConnector.connectWeld(torso, rightShoulder, new Vector2(-0.7f*torsoData.halfWidth, 0.7f*torsoData.halfHeight),  new Vector2(0, 0));
-		
-		Body rightBicep = makeBicep(-0.0525f, -4.2f);
-		BodyData rightBicepData = (BodyData) rightBicep.getUserData();
-		bodyPartConnector.connectRevolute(torso, rightBicep, new Vector2(-0.7f*torsoData.halfWidth, 0.7f*torsoData.halfHeight),  new Vector2(0, rightBicepData.halfHeight), true, -90, 180);
-		
-		Body rightElbow = makeJoint(-0.0525f, -5);
-		bodyPartConnector.connectWeld(rightBicep, rightElbow, new Vector2(0, -0.9f*rightBicepData.halfHeight),  new Vector2(0, 0));
-		
-		Body rightForearm = makeForearm(-0.0525f, -5.5f);
-		BodyData rightForearmData = (BodyData) rightForearm.getUserData();
-		bodyPartConnector.connectRevolute(rightBicep, rightForearm, new Vector2(0, -0.9f*rightBicepData.halfHeight),  new Vector2(0, 0.9f*rightForearmData.halfHeight), true, 0, 150);
-		
+		/*
 		// left arm
-		Body leftShoulder = makeJoint(0.0525f, -3.5f);
+		Body leftShoulder = makeJointPart(0.0525f, -3.5f);
 		bodyPartConnector.connectWeld(torso, leftShoulder, new Vector2(0.7f*torsoData.halfWidth, 0.7f*torsoData.halfHeight),  new Vector2(0, 0));
 		
-		Body leftBicep = makeBicep(0.0525f, -4.2f);
+		Body leftBicep = makeLimb(0.0525f, -4.2f, 0.1f, 1.4f);
 		BodyData leftBicepData = (BodyData) leftBicep.getUserData();
 		bodyPartConnector.connectRevolute(torso, leftBicep, new Vector2(0.7f*torsoData.halfWidth, 0.7f*torsoData.halfHeight),  new Vector2(0, leftBicepData.halfHeight), true, -90, 180);
 
-		Body leftElbow = makeJoint(0.0525f, -5);
+		Body leftElbow = makeJointPart(0.0525f, -5);
 		bodyPartConnector.connectWeld(leftBicep, leftElbow, new Vector2(0, -0.9f*leftBicepData.halfHeight),  new Vector2(0, 0));
 		
-		Body leftForearm = makeForearm(0.0525f, -5.5f);
+		Body leftForearm = makeLimb(0.0525f, -5.5f, 0.1f, 1.1f);
 		BodyData leftForearmData = (BodyData) leftForearm.getUserData();
 		bodyPartConnector.connectRevolute(leftBicep, leftForearm, new Vector2(0, -0.9f*leftBicepData.halfHeight),  new Vector2(0, 0.9f*leftForearmData.halfHeight), true, 0, 150);
-
-		Body[] bodyArr = {neck, head};
+		*/
+		Body[] bodyArr = {head};
 		return bodyArr;
 	}
 	
-	private Body makeNeck(float posx, float posy) {
-		Body body = bodyPartFactory.makeBoxBody(posx, posy, 0.1f * unit, unit*0.3f, medFlesh, bodyType, CollisionGroups.PLAYER, CollisionGroups.PLAYER | CollisionGroups.OTHER, false);
-		body.setUserData(new BodyData(0.1f*unit, unit*0.3f));
-		return body;
+	private Body buildTorso(Vector2 origin) {
+		Body torso = makeBoxPart(new Vector2(origin.x + 0, origin.y + -4f), 0.45f, 1.3f, 0, lightFlesh);
+		return torso;
+	}
+
+	private Body attachHead(Vector2 origin, Body torso) {
+		// create head
+		Body head = makeBoxPart(new Vector2(origin.x + 0, origin.y + -2.5f), 0.4f, 1f, 0, lightFlesh);
+		BodyData headData = (BodyData) head.getUserData();
+		
+		// create neck
+		Body neck = makeBoxPart(new Vector2(origin.x + 0, origin.y + -3.2f), 0.1f, 0.3f, 0, medFlesh);
+		BodyData neckData = (BodyData) neck.getUserData();
+		
+		// connect head to neck
+		float lengthRatio = 0.95f;
+		bodyPartConnector.connectWeld(head, neck, new Vector2(0, lengthRatio*-(headData.halfHeight)), new Vector2(0, lengthRatio*neckData.halfHeight));
+		
+		// connect neck to torso
+		BodyData torsoData = (BodyData) torso.getUserData();
+		bodyPartConnector.connectWeld(neck, torso, new Vector2(0, lengthRatio*-(neckData.halfHeight)), new Vector2(0, lengthRatio*torsoData.halfHeight));
+		return head;
 	}
 	
-	private Body makeLowerSpine(float posx, float posy) {
-		Body body = bodyPartFactory.makeBoxBody(posx, posy, 0.1f * unit, unit*0.4f, medFlesh, bodyType, CollisionGroups.PLAYER, CollisionGroups.PLAYER | CollisionGroups.OTHER, false);
-		body.setUserData(new BodyData(0.1f*unit, unit*0.3f));
-		return body;
+	private Body attachPelvis(Vector2 origin, Body torso) {
+		// create lower spine
+		Body lowerSpine = makeBoxPart(new Vector2(origin.x + 0, origin.y + -4.8f), 0.1f, 0.4f, 0, medFlesh);
+		BodyData lowerSpineData = (BodyData) lowerSpine.getUserData();
+		
+		// connect lower spine and torso
+		float lengthRatio = 0.95f;
+		BodyData torsoData = (BodyData) torso.getUserData();
+		bodyPartConnector.connectWeld(torso, lowerSpine, new Vector2(0, lengthRatio*-(torsoData.halfHeight)), new Vector2(0, lengthRatio*lowerSpineData.halfHeight));
+		
+		// create pelvis
+		Body pelvis = makeBoxPart(new Vector2(origin.x+ 0, origin.y + -5.5f), 0.55f, 1, 0, lightFlesh);
+		BodyData pelvisData = (BodyData) pelvis.getUserData();
+		
+		// connect lowerspine and pelvis
+		bodyPartConnector.connectWeld(lowerSpine, pelvis, new Vector2(0, lengthRatio*-(lowerSpineData.halfHeight)), new Vector2(0, lengthRatio*pelvisData.halfHeight));
+		
+		return pelvis;
 	}
 	
-	private Body makeHead(float posx, float posy) {
-		Body body = bodyPartFactory.makeBoxBody(posx, posy, 0.4f*unit, unit, lightFlesh, bodyType, CollisionGroups.PLAYER, CollisionGroups.OTHER, false);
-		body.setUserData(new BodyData(0.4f*unit, unit));
-		return body;
+	private Body[] attachLeg(Vector2 origin, Body pelvis, int direction) {
+		float widthRatio = 0.75f;
+		float heightRatio = 0.95f;
+		float heightRatio2 = 0.9f;
+		
+		// create pelvis joint
+		Body pelvisJoint = makeJointPart(origin.x + (direction * 0.0525f), origin.y + -5.75f, 0.13f, lightFlesh);
+		
+		// connect pelvis joint to pelvis
+		BodyData pelvisData = (BodyData) pelvis.getUserData();
+		
+		bodyPartConnector.connectWeld(pelvis, pelvisJoint, new Vector2((direction*widthRatio)*pelvisData.halfWidth, heightRatio*-(pelvisData.halfHeight)), new Vector2(0, 0));
+		
+		// create thigh
+		Body thigh = makeBoxPart(new Vector2(origin.x + (direction*0.0525f), origin.y + -7.1f), 0.1f, 2f, 0, lightFlesh);
+		
+		// connect thigh to pelvis joint
+		BodyData thighData = (BodyData) thigh.getUserData();
+		bodyPartConnector.connectRevolute(pelvis, thigh, new Vector2((direction*widthRatio)*pelvisData.halfWidth, heightRatio*-(pelvisData.halfHeight)), new Vector2(0, heightRatio*(thighData.halfHeight)), true, -60, 60);
+		
+		// create knee
+		Body kneeCap = makeJointPart(origin.x + 0, origin.y + -8f, 0.13f, lightFlesh);
+		
+		// connect knee to thigh
+		bodyPartConnector.connectWeld(thigh, kneeCap, new Vector2(0, heightRatio2*-(thighData.halfHeight)), new Vector2(0, 0));
+		
+		// create calf
+		Body calf = makeBoxPart(new Vector2(origin.x + (direction*0.0325f), origin.y + -8.8f), 0.1f, 1.8f, 0, lightFlesh);
+		BodyData calfData = (BodyData) calf.getUserData();
+		bodyPartConnector.connectRevolute(thigh, calf, new Vector2(0, heightRatio2*-(thighData.halfHeight)), new Vector2(0, heightRatio2*calfData.halfHeight), true, -150f, 0);
+		
+		// create foot
+		Body foot = makeBoxPart(new Vector2(origin.x + -0.02f, origin.y + -9.9f), 0.7f, 0.3f, 0, lightFlesh);
+		BodyData footData = (BodyData) foot.getUserData();
+		bodyPartConnector.connectRevolute(calf, foot, new Vector2(0, heightRatio2*-(calfData.halfHeight)), new Vector2(heightRatio2*-(footData.halfHeight), 0), true, -60, 45);
+		
+		Body[] bodyArr = {calf, thigh};
+		return bodyArr;
 	}
 	
-	private Body makePelvis(float posx, float posy) {
-		Body body = bodyPartFactory.makeBoxBody(posx, posy, 0.55f*unit, unit, lightFlesh, bodyType, CollisionGroups.PLAYER, CollisionGroups.OTHER, false);
-		body.setUserData(new BodyData(0.55f*unit, unit));
+	private Body makeJointPart(float posx, float posy, float radiusMultx, HashMap<String, Float> material) {
+		float radius = unit * radiusMultx;
+		Body body = bodyPartFactory.makeCircleBody(posx, posy, radius, material, bodyType, CollisionGroups.PLAYER, CollisionGroups.OTHER, false);
+		body.setUserData(new BodyData(radius));
 		return body;
 	}
+
+	// bodytype if specified in instance variable
+	private Body makeBoxPart(Vector2 pos, float widthMultx, float heightMultx, float startingAngle, HashMap<String, Float> material) {
+		float partWidth = widthMultx*unit;
+		float partHeight = heightMultx*unit;
+		Body body = bodyPartFactory.makeBoxBody(pos.x, pos.y, partWidth, partHeight, material, bodyType, CollisionGroups.PLAYER, CollisionGroups.OTHER, false, startingAngle);
+		body.setUserData(new BodyData(partWidth, partHeight));
+		return body;
+	}
+
+	// bodytype is passed in
+	// NOTE: FOR TESTING
+	private Body makeBoxPart(Vector2 pos, float widthMultx, float heightMultx, float startingAngle, HashMap<String, Float> material, BodyType bt) {
+		float partWidth = widthMultx*unit;
+		float partHeight = heightMultx*unit;
+		Body body = bodyPartFactory.makeBoxBody(pos.x, pos.y, partWidth, partHeight, material, bt, CollisionGroups.PLAYER, CollisionGroups.OTHER, false, startingAngle);
+		body.setUserData(new BodyData(partWidth, partHeight));
+		return body;
+	}
+
 	
-	private Body makeTorso(float posx, float posy) {
-		Body body = bodyPartFactory.makeBoxBody(posx, posy, 0.45f*unit, 1.3f*unit, lightFlesh, bodyType, CollisionGroups.PLAYER, CollisionGroups.OTHER, false);
-		body.setUserData(new BodyData(0.45f*unit, unit*1.3f));
-		return body;
-	}
-	
-	private Body makeJoint(float posx, float posy) {
-		Body body = bodyPartFactory.makeCircleBody(posx, posy, 0.13f*unit, lightFlesh, bodyType, CollisionGroups.PLAYER, CollisionGroups.OTHER, false);
-		body.setUserData(new BodyData(0.13f*unit));
-		return body;
-	}
-	
-	private Body makeThigh(float posx, float posy) {
-		Body body = bodyPartFactory.makeBoxBody(posx, posy, 0.1f * unit, unit*2, lightFlesh, bodyType, CollisionGroups.PLAYER, CollisionGroups.OTHER, false);
-		body.setUserData(new BodyData(0.1f*unit, unit*2));
-		return body;
-	}
-	
-	private Body makeCalf(float posx, float posy) {
-		Body body =  bodyPartFactory.makeBoxBody(posx, posy, 0.1f * unit, unit*1.8f, lightFlesh, bodyType, CollisionGroups.PLAYER, CollisionGroups.OTHER, false);
-		body.setUserData(new BodyData(0.1f*unit, unit*1.8f));
-		return body;
-	}
-	
-	private Body makeBicep(float posx, float posy) {
-		Body body =  bodyPartFactory.makeBoxBody(posx, posy, 0.1f * unit, unit*1.4f, lightFlesh, bodyType, CollisionGroups.PLAYER, CollisionGroups.OTHER, false);
-		body.setUserData(new BodyData(0.1f*unit, unit*1.4f));
-		return body;
-	}
-	
-	private Body makeForearm(float posx, float posy) {
-		Body body =  bodyPartFactory.makeBoxBody(posx, posy, 0.1f * unit, unit*1.1f, lightFlesh, bodyType, CollisionGroups.PLAYER, CollisionGroups.OTHER, false);
-		body.setUserData(new BodyData(0.1f*unit, unit*1.1f));
-		return body;
-	}
-	
-	private Body makeFoot(float posx, float posy) {
-		Body body = bodyPartFactory.makeBoxBody(posx, posy, 0.7f *unit, unit*0.3f, lightFlesh, bodyType, CollisionGroups.PLAYER, CollisionGroups.OTHER, false);
-		body.setUserData(new BodyData(0.5f*unit, unit*0.3f));
-		return body;
-	}
-	 
+
 	private HashMap<String, Float> makeFleshProperties(float den, float fric, float rest) {
 		HashMap<String, Float>	prop = new HashMap<String, Float>();
 		prop.put("density", den);
