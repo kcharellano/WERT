@@ -13,6 +13,8 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public class BodyPartFactory {
 	private World world;
+	private float DEGTORADIANS = (float) Math.PI / 180; 
+
 	
 	public BodyPartFactory(World world) {
 		this.world = world;
@@ -49,9 +51,8 @@ public class BodyPartFactory {
 		PolygonShape boxShape = new PolygonShape();
 		boxShape.setAsBox(width/2, height/2);
 		//make body
-		Body boxBody = world.createBody(makeBodyDef(bodyType, posx, posy, rotation));
+		Body boxBody = world.createBody(makeBodyDef(bodyType, posx, posy, rotation, angle));
 		// set starting angle
-		boxBody.setTransform(boxBody.getPosition(), angle);
 		//make fixture
 		boxBody.createFixture(FixtureDefFactory.makeFixture(properties, boxShape, ignoreBits, collideBits));
 		boxShape.dispose();
@@ -79,6 +80,16 @@ public class BodyPartFactory {
 		bodyDef.position.x = posx;
 		bodyDef.position.y = posy;
 		bodyDef.fixedRotation = rotation;
+		return bodyDef;
+	}
+	
+	private BodyDef makeBodyDef(BodyType bodyType, float posx, float posy, boolean rotation, float angle) {
+		BodyDef bodyDef = new BodyDef();
+		bodyDef.type = bodyType;
+		bodyDef.position.x = posx;
+		bodyDef.position.y = posy;
+		bodyDef.fixedRotation = rotation;
+		bodyDef.angle = angle * DEGTORADIANS;
 		return bodyDef;
 	}
 }

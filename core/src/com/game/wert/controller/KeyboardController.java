@@ -2,12 +2,14 @@ package com.game.wert.controller;
 
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.physics.box2d.Body;
 
 public class KeyboardController implements InputProcessor {
 	public boolean left, right, up, down;
 	
 	public boolean w, e, r, t;
-
+	
+	public Body rightThigh, rightCalf, rightKneeCap;
 	// Activated when a key on the keyboard is pressed down
 	@Override
 	public boolean keyDown(int keycode) {
@@ -32,18 +34,22 @@ public class KeyboardController implements InputProcessor {
 	            break;
 	        case Keys.W:
 	        	w = true;
+	        	rightThigh.setFixedRotation(false);
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.E:
 	        	e = true;
+	        	rightThigh.setFixedRotation(false);
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.R:
 	        	r = true;
+	        	rightCalf.setFixedRotation(false);
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.T:
 	        	t = true;
+	        	rightCalf.setFixedRotation(false);
 	        	keyProcessed = true;
         }
 	return keyProcessed;	//  return our peyProcessed flag
@@ -55,8 +61,8 @@ public class KeyboardController implements InputProcessor {
 	boolean keyProcessed = false;
 	switch (keycode) // switch code base on the variable keycode
         {
-	        case Keys.LEFT:  	
-	            left = false;	
+	        case Keys.LEFT:	
+	            left = false;
 	            keyProcessed = true;	
 	            break;
 	        case Keys.RIGHT: 	
@@ -73,18 +79,22 @@ public class KeyboardController implements InputProcessor {
 	            break;
 	        case Keys.W:
 	        	w = false;
+	        	rightThigh.setFixedRotation(true);
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.E:
 	        	e = false;
+	        	rightThigh.setFixedRotation(true);
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.R:
 	        	r = false;
+	        	rightCalf.setFixedRotation(true);
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.T:
 	        	t = false;
+	            rightCalf.setFixedRotation(true);
 	        	keyProcessed = true;
         }
 	return keyProcessed;	//  return our peyProcessed flag
@@ -130,6 +140,12 @@ public class KeyboardController implements InputProcessor {
 	public boolean scrolled(float amountX, float amountY) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+	
+	public void setControllableParts(Body rightCalf, Body rightThigh, Body rightKneeCap) {
+		this.rightCalf = rightCalf;
+		this.rightThigh = rightThigh;
+		this.rightKneeCap = rightKneeCap;
 	}
 
 }
