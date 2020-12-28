@@ -9,7 +9,8 @@ public class KeyboardController implements InputProcessor {
 	
 	public boolean w, e, r, t;
 	
-	public Body rightThigh, rightCalf, rightKneeCap;
+	private Body rightThigh, rightCalf, rightKneeCap;
+	private Body leftThigh, leftCalf, leftKneeCap; 
 	// Activated when a key on the keyboard is pressed down
 	@Override
 	public boolean keyDown(int keycode) {
@@ -35,20 +36,25 @@ public class KeyboardController implements InputProcessor {
 	        case Keys.W:
 	        	w = true;
 	        	rightThigh.setFixedRotation(false);
+	        	leftThigh.setFixedRotation(false);
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.E:
 	        	e = true;
 	        	rightThigh.setFixedRotation(false);
+	        	leftThigh.setFixedRotation(false);
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.R:
 	        	r = true;
+	        	leftCalf.setFixedRotation(false);
 	        	rightCalf.setFixedRotation(false);
+
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.T:
 	        	t = true;
+	        	leftCalf.setFixedRotation(false);
 	        	rightCalf.setFixedRotation(false);
 	        	keyProcessed = true;
         }
@@ -80,20 +86,24 @@ public class KeyboardController implements InputProcessor {
 	        case Keys.W:
 	        	w = false;
 	        	rightThigh.setFixedRotation(true);
+	        	leftThigh.setFixedRotation(true);
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.E:
 	        	e = false;
 	        	rightThigh.setFixedRotation(true);
+	        	leftThigh.setFixedRotation(true);
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.R:
 	        	r = false;
-	        	rightCalf.setFixedRotation(true);
+	        	leftCalf.setFixedRotation(true);
+	            rightCalf.setFixedRotation(true);
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.T:
 	        	t = false;
+	        	leftCalf.setFixedRotation(true);
 	            rightCalf.setFixedRotation(true);
 	        	keyProcessed = true;
         }
@@ -142,10 +152,11 @@ public class KeyboardController implements InputProcessor {
 		return false;
 	}
 	
-	public void setControllableParts(Body rightCalf, Body rightThigh, Body rightKneeCap) {
+	public void setControllableParts(Body rightCalf, Body rightThigh, Body leftCalf, Body leftThigh) {
 		this.rightCalf = rightCalf;
 		this.rightThigh = rightThigh;
-		this.rightKneeCap = rightKneeCap;
+		this.leftCalf = leftCalf;
+		this.leftThigh = leftThigh;
 	}
 
 }

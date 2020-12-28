@@ -30,7 +30,9 @@ public class WertModel {
 	private Body[] bodyParts;
 	private Body rightCalf;
 	private Body rightThigh;
-	private Body rightKneeCap;
+	private Body leftCalf;
+	private Body leftThigh;
+	private Body torso;
 	
 	
 	public WertModel (KeyboardController controller) {
@@ -57,16 +59,13 @@ public class WertModel {
 		*/
 		//bpf.makeBoxBody(0, 0, 1, 3, FixtureDefFactory.WOOD, BodyType.StaticBody, CollisionGroups.PLAYER, CollisionGroups.OTHER, false, 45f * DEGTORADIANS);
 		Timmy player = new Timmy(world, h);
-		bodyParts = player.makeTimmy(new Vector2(0,8));
-		rightCalf = bodyParts[2];
-		rightThigh = bodyParts[3];
-		rightKneeCap = bodyParts[4];
-		controller.setControllableParts(rightCalf, rightThigh, rightKneeCap);
-		//ArtMan player = new ArtMan(world, 3f, 4f);
-		//dyParts = player.makeArtMan();
-		//TestJoints tj = new TestJoints(world);
-		//bodyParts = tj.createJoints();
-		
+		bodyParts = player.makeTimmy(new Vector2(0,4));
+		rightCalf = bodyParts[0];
+		rightThigh = bodyParts[1];
+		leftCalf = bodyParts[2];
+		leftThigh = bodyParts[3];
+		torso = bodyParts[4];
+		controller.setControllableParts(rightCalf, rightThigh, leftCalf, leftThigh);
 
 	}
 	
@@ -83,33 +82,38 @@ public class WertModel {
 	public void logicStep(float delta) {
 		//balancer(delta);
 		
+		// TORSO CONTROLS
 		float force = 0.5f;
-		/*
 		if(controller.left){
-			bodyParts[3].applyForceToCenter(-force, 0, true);
+			torso.applyForceToCenter(-force, 0, true);
 		}
 		if(controller.right){
-			bodyParts[3].applyForceToCenter(force, 0,true);
+			torso.applyForceToCenter(force, 0, true);
 		}
 		
 		else if(controller.up){
-			bodyParts[3].applyForceToCenter(0, force,true);
+			torso.applyForceToCenter(0, force, true);
 		}
 		else if(controller.down){
-			bodyParts[3].applyForceToCenter(0, -force,true);
+			torso.applyForceToCenter(0, -force, true);
 		}
-		*/
+		
+		// LEG CONTROLS
 		if(controller.w) {
 			rightThigh.applyAngularImpulse(0.01f, true);
+			leftThigh.applyAngularImpulse(-0.01f, true);
 		}
 		else if(controller.e) {
+			leftThigh.applyAngularImpulse(0.01f, true);
 			rightThigh.applyAngularImpulse(-0.01f, true);
 		}
 		else if(controller.r) {
-			rightCalf.applyAngularImpulse(-0.001f, true);
+			leftCalf.applyAngularImpulse(-0.005f,  true);
+			rightCalf.applyAngularImpulse(0.005f, true);
 		}
 		else if(controller.t) {
-			rightCalf.applyAngularImpulse(0.001f, true);
+			rightCalf.applyAngularImpulse(-0.005f,  true);
+			leftCalf.applyAngularImpulse(0.005f, true);
 		}
 
 		world.step(delta , 6, 2);
