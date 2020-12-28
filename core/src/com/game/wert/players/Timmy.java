@@ -19,9 +19,11 @@ public class Timmy {
 
 	
 	// fixture properties for body part creation
-	private HashMap<String, Float> lightFlesh = makeFleshProperties(0.01f, 0.01f, 0f);
+	private HashMap<String, Float> lightFlesh = makeFleshProperties(0.05f, 0.01f, 0f);
 	private HashMap<String, Float> medFlesh = makeFleshProperties(0.2f, 0.2f, 0f);
-	private HashMap<String, Float> superLightFlesh = makeFleshProperties(0.0000001f, 0.2f, 0f);
+	private HashMap<String, Float> superLightFlesh = makeFleshProperties(0.01f, 0.2f, 0f);
+	private HashMap<String, Float> shoeMaterial = makeFleshProperties(0.1f, 0.9f, 0f);
+
 
 	// height in meters
 	private float height;
@@ -42,20 +44,20 @@ public class Timmy {
 		Body pelvis = attachPelvis(origin, torso);
 		//attachArm(origin, torso, -1);
 		//attachArm(origin, torso, 1);
-		Body[] rightLeg = attachLeg(origin, pelvis, -1, -15f, -20f);
-		Body[] leftLeg = attachLeg(origin, pelvis, 1, 15f, -10f);
-		Body[] bodyArr = {rightLeg[0], rightLeg[1], leftLeg[0], leftLeg[1], torso};
+		Body[] rightLeg = attachLeg(origin, pelvis, -1, -20f, -25f);
+		Body[] leftLeg = attachLeg(origin, pelvis, 1, 20f, -10f);
+		Body[] bodyArr = {rightLeg[0], rightLeg[1], leftLeg[0], leftLeg[1], torso, pelvis};
 		return bodyArr;
 	}
 	
 	private Body buildTorso(Vector2 origin) {
-		Body torso = makeBoxPart(new Vector2(origin.x + 0, origin.y + -4f), 0.45f, 1.3f, 0, lightFlesh);
+		Body torso = makeBoxPart(new Vector2(origin.x + 0, origin.y + -4f), 0.45f, 1.3f, 0, superLightFlesh);
 		return torso;
 	}
 
 	private Body attachHead(Vector2 origin, Body torso) {
 		// create head
-		Body head = makeBoxPart(new Vector2(origin.x + 0, origin.y + -2.5f), 0.4f, 1f, 0, lightFlesh);
+		Body head = makeBoxPart(new Vector2(origin.x + 0, origin.y + -2.5f), 0.4f, 1f, 0, superLightFlesh);
 		BodyData headData = (BodyData) head.getUserData();
 		
 		// create neck
@@ -83,7 +85,7 @@ public class Timmy {
 		bodyPartConnector.connectWeld(torso, lowerSpine, new Vector2(0, lengthRatio*-(torsoData.halfHeight)), new Vector2(0, lengthRatio*lowerSpineData.halfHeight));
 		
 		// create pelvis
-		Body pelvis = makeBoxPart(new Vector2(origin.x+ 0, origin.y + -5.5f), 0.55f, 1, 0, lightFlesh, BodyType.DynamicBody);
+		Body pelvis = makeBoxPart(new Vector2(origin.x+ 0, origin.y + -5.5f), 0.6f, 1, 0, lightFlesh, true);
 		BodyData pelvisData = (BodyData) pelvis.getUserData();
 		
 		// connect lowerspine and pelvis
@@ -132,7 +134,7 @@ public class Timmy {
 		
 		// connect thigh to pelvis joint
 		BodyData thighData = (BodyData) thigh.getUserData();
-		bodyPartConnector.connectRevolute(pelvis, thigh, new Vector2((direction*widthRatio)*pelvisData.halfWidth, heightRatio*-(pelvisData.halfHeight)), new Vector2(0, heightRatio*(thighData.halfHeight)), true, -60, 60);
+		bodyPartConnector.connectRevolute(pelvis, thigh, new Vector2((direction*0)*pelvisData.halfWidth, heightRatio*-(pelvisData.halfHeight)), new Vector2(0, heightRatio*(thighData.halfHeight)), true, -80, 80);
 		
 		// create knee
 		Body kneeCap = makeJointPart(origin.x + 0, origin.y + -8f, 0.13f, lightFlesh);
@@ -147,7 +149,7 @@ public class Timmy {
 		//bodyPartConnector.connectRevolute(kneeCap, calf, new Vector2(0, 0), new Vector2(0, heightRatio2*calfData.halfHeight), true, -150f, 0);
 		
 		// create foot
-		Body foot = makeBoxPart(new Vector2(origin.x + -0.02f, origin.y + -9.9f), 0.7f, 0.3f, 0, lightFlesh, false);
+		Body foot = makeBoxPart(new Vector2(origin.x + -0.02f, origin.y + -9.9f), 0.7f, 0.3f, 0, shoeMaterial, false);
 		BodyData footData = (BodyData) foot.getUserData();
 		bodyPartConnector.connectRevolute(calf, foot, new Vector2(0, heightRatio2*-(calfData.halfHeight)), new Vector2(heightRatio2*-(footData.halfHeight), 0), true, -10f, 15f);
 		

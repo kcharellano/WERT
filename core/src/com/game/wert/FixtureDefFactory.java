@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.Shape;
 public class FixtureDefFactory {
 	public static final int WOOD = 0;
 	public static final int STONE = 1;
+	public static final int FLOOR = 2;
 	
 	/**
 	 * @param material Predefined material properties
@@ -33,6 +34,10 @@ public class FixtureDefFactory {
 			fixtureDef.friction = 0.9f;
 			fixtureDef.restitution = 0.01f;
 			break;
+		case FLOOR:
+			fixtureDef.density = 1f;
+			fixtureDef.friction = 0.9f;
+			fixtureDef.restitution = 0f;
 		}
 		return fixtureDef;
 	}

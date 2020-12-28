@@ -10,7 +10,7 @@ public class KeyboardController implements InputProcessor {
 	public boolean w, e, r, t;
 	
 	private Body rightThigh, rightCalf, rightKneeCap;
-	private Body leftThigh, leftCalf, leftKneeCap; 
+	private Body leftThigh, leftCalf, leftKneeCap, pelvis; 
 	// Activated when a key on the keyboard is pressed down
 	@Override
 	public boolean keyDown(int keycode) {
@@ -37,25 +37,28 @@ public class KeyboardController implements InputProcessor {
 	        	w = true;
 	        	rightThigh.setFixedRotation(false);
 	        	leftThigh.setFixedRotation(false);
+	        	pelvis.setFixedRotation(false);
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.E:
 	        	e = true;
 	        	rightThigh.setFixedRotation(false);
 	        	leftThigh.setFixedRotation(false);
+	        	pelvis.setFixedRotation(false);
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.R:
 	        	r = true;
 	        	leftCalf.setFixedRotation(false);
 	        	rightCalf.setFixedRotation(false);
-
+	        	pelvis.setFixedRotation(false);
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.T:
 	        	t = true;
 	        	leftCalf.setFixedRotation(false);
 	        	rightCalf.setFixedRotation(false);
+	        	pelvis.setFixedRotation(false);
 	        	keyProcessed = true;
         }
 	return keyProcessed;	//  return our peyProcessed flag
@@ -87,24 +90,28 @@ public class KeyboardController implements InputProcessor {
 	        	w = false;
 	        	rightThigh.setFixedRotation(true);
 	        	leftThigh.setFixedRotation(true);
+	        	pelvis.setFixedRotation(true);
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.E:
 	        	e = false;
 	        	rightThigh.setFixedRotation(true);
 	        	leftThigh.setFixedRotation(true);
+	        	pelvis.setFixedRotation(true);
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.R:
 	        	r = false;
 	        	leftCalf.setFixedRotation(true);
 	            rightCalf.setFixedRotation(true);
+	        	pelvis.setFixedRotation(true);
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.T:
 	        	t = false;
 	        	leftCalf.setFixedRotation(true);
 	            rightCalf.setFixedRotation(true);
+	        	pelvis.setFixedRotation(true);
 	        	keyProcessed = true;
         }
 	return keyProcessed;	//  return our peyProcessed flag
@@ -152,11 +159,12 @@ public class KeyboardController implements InputProcessor {
 		return false;
 	}
 	
-	public void setControllableParts(Body rightCalf, Body rightThigh, Body leftCalf, Body leftThigh) {
+	public void setControllableParts(Body rightCalf, Body rightThigh, Body leftCalf, Body leftThigh, Body pelvis) {
 		this.rightCalf = rightCalf;
 		this.rightThigh = rightThigh;
 		this.leftCalf = leftCalf;
 		this.leftThigh = leftThigh;
+		this.pelvis = pelvis;
 	}
 
 }
