@@ -40,6 +40,8 @@ public class Timmy {
 		Body torso = buildTorso(origin);
 		Body head = attachHead(origin, torso);
 		Body pelvis = attachPelvis(origin, torso);
+		//attachArm(origin, torso, -1);
+		//attachArm(origin, torso, 1);
 		Body[] rightLeg = attachLeg(origin, pelvis, -1, -15f, -20f);
 		Body[] leftLeg = attachLeg(origin, pelvis, 1, 15f, -10f);
 		Body[] bodyArr = {rightLeg[0], rightLeg[1], leftLeg[0], leftLeg[1], torso};
@@ -90,6 +92,28 @@ public class Timmy {
 		return pelvis;
 	}
 	
+	private void attachArm(Vector2 origin, Body torso, int direction) {
+		
+		Body shoulder = makeJointPart(origin.x, origin.y, 0.13f, lightFlesh);
+		float widthRatio = 0.90f;
+		float heightRatio = 0.70f;
+		float heightRatio2 = 0.90f;
+		BodyData torsoData = (BodyData) torso.getUserData();
+		bodyPartConnector.connectWeld(torso, shoulder, new Vector2(widthRatio * (direction*torsoData.halfWidth), heightRatio*(torsoData.halfHeight)), new Vector2(0,0));
+		
+		Body bicep = makeBoxPart(new Vector2(origin.x, origin.y), 0.1f, 1.3f, 0, lightFlesh, false);
+		BodyData bicepData = (BodyData) bicep.getUserData();
+		bodyPartConnector.connectRevolute(torso, bicep, new Vector2(widthRatio * (direction*torsoData.halfWidth), heightRatio*(torsoData.halfHeight)), new Vector2(0, heightRatio2*(bicepData.halfHeight)), false, 0, 0);
+		
+		Body elbow = makeJointPart(origin.x, origin.y, 0.13f, lightFlesh);
+		bodyPartConnector.connectWeld(elbow, bicep, new Vector2(0,0), new Vector2(0, heightRatio2*-(bicepData.halfHeight)));
+
+		
+		Body forearm = makeBoxPart(new Vector2(origin.x, origin.y), 0.1f, 1f, 0, lightFlesh, false);
+		BodyData forearmData = (BodyData) forearm.getUserData();
+		bodyPartConnector.connectRevolute(bicep, forearm, new Vector2(0, heightRatio2*-(bicepData.halfHeight)), new Vector2(0, heightRatio2*(forearmData.halfHeight)), true, 0, 150);
+		
+	}
 	private Body[] attachLeg(Vector2 origin, Body pelvis, int direction, float thighAngle, float kneeAngle) {
 		float widthRatio = 0.75f;
 		float heightRatio = 0.95f;

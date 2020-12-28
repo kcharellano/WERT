@@ -43,21 +43,7 @@ public class WertModel {
 		// create floor
 		Body floor = bpf.makeBoxBody(0, -15, 50, 10, FixtureDefFactory.STONE, BodyType.StaticBody, CollisionGroups.OTHER, CollisionGroups.PLAYER);	
 		float h = 8;
-		//stick
-		//bpf.makeBoxBody(0, -6, 0.01f, h, FixtureDefFactory.WOOD, BodyType.StaticBody, CollisionGroups.PLAYER, CollisionGroups.OTHER);
-		//bar
-		/*
-		bpf.makeBoxBody(0, -2, 1, 0.01f, FixtureDefFactory.WOOD, BodyType.StaticBody, CollisionGroups.OTHER, CollisionGroups.PLAYER);
-		bpf.makeBoxBody(0, -3, 1, 0.01f, FixtureDefFactory.WOOD, BodyType.StaticBody, CollisionGroups.OTHER, CollisionGroups.PLAYER);
-		bpf.makeBoxBody(0, -4, 1, 0.01f, FixtureDefFactory.WOOD, BodyType.StaticBody, CollisionGroups.OTHER, CollisionGroups.PLAYER);
-		bpf.makeBoxBody(0, -5, 1, 0.01f, FixtureDefFactory.WOOD, BodyType.StaticBody, CollisionGroups.OTHER, CollisionGroups.PLAYER);
-		bpf.makeBoxBody(0, -6, 1, 0.01f, FixtureDefFactory.WOOD, BodyType.StaticBody, CollisionGroups.OTHER, CollisionGroups.PLAYER);
-		bpf.makeBoxBody(0, -7, 1, 0.01f, FixtureDefFactory.WOOD, BodyType.StaticBody, CollisionGroups.OTHER, CollisionGroups.PLAYER);
-		bpf.makeBoxBody(0, -8, 1, 0.01f, FixtureDefFactory.WOOD, BodyType.StaticBody, CollisionGroups.OTHER, CollisionGroups.PLAYER);
-		bpf.makeBoxBody(0, -9, 1, 0.01f, FixtureDefFactory.WOOD, BodyType.StaticBody, CollisionGroups.OTHER, CollisionGroups.PLAYER);
-		bpf.makeBoxBody(0, -10, 1, 0.01f, FixtureDefFactory.WOOD, BodyType.StaticBody, CollisionGroups.OTHER, CollisionGroups.PLAYER);
-		*/
-		//bpf.makeBoxBody(0, 0, 1, 3, FixtureDefFactory.WOOD, BodyType.StaticBody, CollisionGroups.PLAYER, CollisionGroups.OTHER, false, 45f * DEGTORADIANS);
+				
 		Timmy player = new Timmy(world, h);
 		bodyParts = player.makeTimmy(new Vector2(0,4));
 		rightCalf = bodyParts[0];
