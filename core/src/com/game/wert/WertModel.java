@@ -13,13 +13,7 @@ public class WertModel {
 	
 	private BodyPartFactory bpf;
 	private KeyboardController controller;
-	private Body[] bodyParts;
-	private Body rightCalf;
-	private Body rightThigh;
-	private Body leftCalf;
-	private Body leftThigh;
-	private Body torso;
-	private Body pelvis;
+	private Timmy player;
 	
 	
 	public WertModel (KeyboardController controller) {
@@ -31,67 +25,42 @@ public class WertModel {
 		bpf.makeBoxBody(0, -15, 50, 10, FixtureDefFactory.FLOOR, BodyType.StaticBody, CollisionGroups.OTHER, CollisionGroups.PLAYER);	
 		float h = 8;
 				
-		Timmy player = new Timmy(world, h);
-		bodyParts = player.makeTimmy(new Vector2(0,4));
-		rightCalf = bodyParts[0];
-		rightThigh = bodyParts[1];
-		leftCalf = bodyParts[2];
-		leftThigh = bodyParts[3];
-		torso = bodyParts[4];
-		pelvis = bodyParts[5];
-		controller.setControllableParts(rightCalf, rightThigh, leftCalf, leftThigh, pelvis);
-
-	}
-	
-	private Vector2[] makeVectorArray(float ...fs) {
-		Vector2[] varr = new Vector2[(int) fs.length/2];
-		for(int i=0, j=0; i < fs.length; i+=2, j+=1) {
-			varr[j] = new Vector2(fs[i], fs[i+1]);
-		}
-		return varr;
+		player = new Timmy(world, h);
+		player.makeTimmy(new Vector2(0,4), controller);
 	}
 	
 	// THIS IS WHERE THE CONTROLLER AFFECTS THE BODIES
 	public void logicStep(float delta) {
 		//balancer(delta);
-		
+		/*
 		// TORSO CONTROLS
 		float force = 0.9f;
 		if(controller.left){
-			torso.applyForceToCenter(-force, 0, true);
+			//torso.applyForceToCenter(-force, 0, true);
 		}
 		if(controller.right){
-			torso.applyForceToCenter(force, 0, true);
+			//torso.applyForceToCenter(force, 0, true);
 		}
 		
 		else if(controller.up){
-			torso.applyForceToCenter(0, force, true);
+			//torso.applyForceToCenter(0, force, true);
 		}
 		else if(controller.down){
-			torso.applyForceToCenter(0, -force, true);
+			//torso.applyForceToCenter(0, -force, true);
 		}
-		
-		float thighForce = 0.05f;
-		float thighModifier = 0.8f;
-		float calfForce = 0.05f;
-		float calfModifier = 0.7f;
-
+		*/
 		// LEG CONTROLS
 		if(controller.w) {
-			rightThigh.applyAngularImpulse(thighForce, true);
-			leftThigh.applyAngularImpulse(thighModifier*-thighForce, true);
+			player.moveRightThigh();
 		}
 		else if(controller.e) {
-			leftThigh.applyAngularImpulse(thighForce, true);
-			rightThigh.applyAngularImpulse(thighModifier*-thighForce, true);
+			player.moveLeftThigh();
 		}
 		else if(controller.r) {
-			leftCalf.applyAngularImpulse(calfModifier*-calfForce,  true);
-			rightCalf.applyAngularImpulse(calfForce, true);
+			player.moveLeftCalf();
 		}
 		else if(controller.t) {
-			rightCalf.applyAngularImpulse(calfModifier*-calfForce,  true);
-			leftCalf.applyAngularImpulse(calfForce, true);
+			player.moveRightCalf();
 		}
 
 		world.step(delta , 6, 2);

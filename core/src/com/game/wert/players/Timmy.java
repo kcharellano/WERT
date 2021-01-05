@@ -1,5 +1,6 @@
 package com.game.wert.players;
 
+import java.lang.ModuleLayer.Controller;
 import java.util.HashMap;
 
 import com.badlogic.gdx.math.Vector2;
@@ -10,12 +11,12 @@ import com.game.wert.BodyData;
 import com.game.wert.BodyPartConnector;
 import com.game.wert.BodyPartFactory;
 import com.game.wert.CollisionGroups;
+import com.game.wert.controller.KeyboardController;
 
 public class Timmy {
 	private World world;
 	private BodyPartFactory bodyPartFactory;
 	private BodyPartConnector bodyPartConnector;
-	private float DEGTORADIANS = (float) Math.PI / 180; 
 
 	
 	// fixture properties for body part creation
@@ -23,10 +24,18 @@ public class Timmy {
 	private HashMap<String, Float> medFlesh = makeFleshProperties(0.2f, 0.2f, 0f);
 	private HashMap<String, Float> superLightFlesh = makeFleshProperties(0.01f, 0.2f, 0f);
 	private HashMap<String, Float> shoeMaterial = makeFleshProperties(0.1f, 0.9f, 0f);
-
+	
+	// Controllable body parts
+	private Body rightThigh;
+	private Body rightCalf;
+	private Body leftThigh;
+	private Body leftCalf;
+	private float thighForce = 0.05f;
+	private float thighModifier = 0.8f;
+	private float calfForce = 0.05f;
+	private float calfModifier = 0.8f;
 
 	// height in meters
-	private float height;
 	private float unit;
 	private BodyType bodyType = BodyType.DynamicBody;
 	
@@ -34,22 +43,44 @@ public class Timmy {
 		this.world = world;
 		bodyPartFactory = new BodyPartFactory(world);
 		bodyPartConnector = new BodyPartConnector(world);
-		this.height = height;
 		this.unit = height/8;
 	}
 	
-	public Body[] makeTimmy(Vector2 origin) {
+	public void makeTimmy(Vector2 origin, KeyboardController controller) {
 		Body torso = buildTorso(origin);
 		Body head = attachHead(origin, torso);
 		Body pelvis = attachPelvis(origin, torso);
 		//attachArm(origin, torso, -1);
 		//attachArm(origin, torso, 1);
 		Body[] rightLeg = attachLeg(origin, pelvis, -1, -20f, -25f);
+		this.rightCalf = rightLeg[0];
+		this.rightThigh = rightLeg[1];
 		Body[] leftLeg = attachLeg(origin, pelvis, 1, 20f, -10f);
-		Body[] bodyArr = {rightLeg[0], rightLeg[1], leftLeg[0], leftLeg[1], torso, pelvis};
-		return bodyArr;
+		this.leftCalf = leftLeg[0];
+		this.leftThigh = leftLeg[1];
+		controller.setControllableParts(rightCalf, rightThigh, leftCalf, leftThigh, pelvis);
+	}
+
+	public void moveRightThigh() {
+		rightThigh.applyAngularImpulse(thighForce, true);
+		leftThigh.applyAngularImpulse(thighModifier*-thighForce, true);
+	}
+
+	public void moveLeftThigh() {
+		leftThigh.applyAngularImpulse(thighForce, true);
+		rightThigh.applyAngularImpulse(thighModifier*-thighForce, true);
+	}
+
+	public void moveLeftCalf() {
+		leftCalf.applyAngularImpulse(calfModifier*-calfForce,  true);
+		rightCalf.applyAngularImpulse(calfForce, true);
 	}
 	
+	public void moveRightCalf() {
+		rightCalf.applyAngularImpulse(calfModifier*-calfForce,  true);
+		leftCalf.applyAngularImpulse(calfForce, true);
+	}
+
 	private Body buildTorso(Vector2 origin) {
 		Body torso = makeBoxPart(new Vector2(origin.x + 0, origin.y + -4f), 0.45f, 1.3f, 0, superLightFlesh);
 		return torso;
