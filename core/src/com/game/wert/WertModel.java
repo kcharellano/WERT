@@ -1,32 +1,18 @@
 package com.game.wert;
 
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.box2d.joints.DistanceJoint;
-import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
-import com.badlogic.gdx.physics.box2d.joints.RevoluteJoint;
-import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.game.wert.controller.KeyboardController;
-import com.game.wert.players.ArtMan;
 import com.game.wert.players.Timmy;
 
-import java.lang.Math;
 
 public class WertModel {
 	public World world;
 	
 	private BodyPartFactory bpf;
-	private Box2DDebugRenderer debugRenderer;
-	private OrthographicCamera camera;
 	private KeyboardController controller;
-	private float DEGTORADIANS = (float) Math.PI / 180; 
 	private Body[] bodyParts;
 	private Body rightCalf;
 	private Body rightThigh;
@@ -42,7 +28,7 @@ public class WertModel {
 		//world.setContactListener(new WertContactListener(this));
 		bpf = new BodyPartFactory(world);
 		// create floor
-		Body floor = bpf.makeBoxBody(0, -15, 50, 10, FixtureDefFactory.FLOOR, BodyType.StaticBody, CollisionGroups.OTHER, CollisionGroups.PLAYER);	
+		bpf.makeBoxBody(0, -15, 50, 10, FixtureDefFactory.FLOOR, BodyType.StaticBody, CollisionGroups.OTHER, CollisionGroups.PLAYER);	
 		float h = 8;
 				
 		Timmy player = new Timmy(world, h);
@@ -65,7 +51,6 @@ public class WertModel {
 		return varr;
 	}
 	
-	
 	// THIS IS WHERE THE CONTROLLER AFFECTS THE BODIES
 	public void logicStep(float delta) {
 		//balancer(delta);
@@ -86,42 +71,30 @@ public class WertModel {
 			torso.applyForceToCenter(0, -force, true);
 		}
 		
-		float cForce1 = 0.05f;
-		
-		float cForce2 = 0.05f;
+		float thighForce = 0.05f;
+		float thighModifier = 0.8f;
+		float calfForce = 0.05f;
+		float calfModifier = 0.7f;
 
 		// LEG CONTROLS
 		if(controller.w) {
-			rightThigh.applyAngularImpulse(cForce1, true);
-			leftThigh.applyAngularImpulse(0.7f*-cForce1, true);
+			rightThigh.applyAngularImpulse(thighForce, true);
+			leftThigh.applyAngularImpulse(thighModifier*-thighForce, true);
 		}
 		else if(controller.e) {
-			leftThigh.applyAngularImpulse(cForce1, true);
-			rightThigh.applyAngularImpulse(0.7f*-cForce1, true);
+			leftThigh.applyAngularImpulse(thighForce, true);
+			rightThigh.applyAngularImpulse(thighModifier*-thighForce, true);
 		}
 		else if(controller.r) {
-			leftCalf.applyAngularImpulse(0.5f*-cForce2,  true);
-			rightCalf.applyAngularImpulse(cForce2, true);
+			leftCalf.applyAngularImpulse(calfModifier*-calfForce,  true);
+			rightCalf.applyAngularImpulse(calfForce, true);
 		}
 		else if(controller.t) {
-			rightCalf.applyAngularImpulse(0.5f*-cForce2,  true);
-			leftCalf.applyAngularImpulse(cForce2, true);
+			rightCalf.applyAngularImpulse(calfModifier*-calfForce,  true);
+			leftCalf.applyAngularImpulse(calfForce, true);
 		}
 
 		world.step(delta , 6, 2);
-	}
-	
-	public void balancer(float delta) {
-		if(bodyParts[3].getAngularVelocity() < 0) {
-			bodyParts[3].applyTorque(bodyParts[3].getInertia()/0.10197f, true);
-		}
-		else if(bodyParts[3].getAngularVelocity() > 0) {
-			bodyParts[3].applyTorque(-bodyParts[3].getInertia()/0.10197f, true);
-		}
-		//bodyParts[3].
-		//bodyParts[3].applyAngularImpulse(bodyParts[3].getInertia(), true);
-		//BodyData userData = (BodyData) bodyParts[3].getUserData();
-		System.out.println("AngularVelocity = " + bodyParts[3].getAngularVelocity() + " | Inertia = " + bodyParts[3].getInertia()/0.10197f);
 	}
 	
 }

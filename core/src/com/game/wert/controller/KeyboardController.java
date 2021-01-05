@@ -9,9 +9,18 @@ public class KeyboardController implements InputProcessor {
 	
 	public boolean w, e, r, t;
 	
-	private Body rightThigh, rightCalf, rightKneeCap;
-	private Body leftThigh, leftCalf, leftKneeCap, pelvis; 
+	private Body rightThigh, rightCalf;
+	private Body leftThigh, leftCalf, pelvis; 
+	
 	// Activated when a key on the keyboard is pressed down
+	public void setControllableParts(Body rightCalf, Body rightThigh, Body leftCalf, Body leftThigh, Body pelvis) {
+		this.rightCalf = rightCalf;
+		this.rightThigh = rightThigh;
+		this.leftCalf = leftCalf;
+		this.leftThigh = leftThigh;
+		this.pelvis = pelvis;
+	}
+
 	@Override
 	public boolean keyDown(int keycode) {
 	boolean keyProcessed = false;
@@ -157,14 +166,6 @@ public class KeyboardController implements InputProcessor {
 	public boolean scrolled(float amountX, float amountY) {
 		// TODO Auto-generated method stub
 		return false;
-	}
-	
-	public void setControllableParts(Body rightCalf, Body rightThigh, Body leftCalf, Body leftThigh, Body pelvis) {
-		this.rightCalf = rightCalf;
-		this.rightThigh = rightThigh;
-		this.leftCalf = leftCalf;
-		this.leftThigh = leftThigh;
-		this.pelvis = pelvis;
 	}
 
 }

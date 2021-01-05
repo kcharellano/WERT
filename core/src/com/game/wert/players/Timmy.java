@@ -116,6 +116,7 @@ public class Timmy {
 		bodyPartConnector.connectRevolute(bicep, forearm, new Vector2(0, heightRatio2*-(bicepData.halfHeight)), new Vector2(0, heightRatio2*(forearmData.halfHeight)), true, 0, 150);
 		
 	}
+	
 	private Body[] attachLeg(Vector2 origin, Body pelvis, int direction, float thighAngle, float kneeAngle) {
 		float widthRatio = 0.75f;
 		float heightRatio = 0.95f;
@@ -164,13 +165,6 @@ public class Timmy {
 		return body;
 	}
 	
-	private Body makeJointPart(float posx, float posy, float radiusMultx, HashMap<String, Float> material, boolean fixed) {
-		float radius = unit * radiusMultx;
-		Body body = bodyPartFactory.makeCircleBody(posx, posy, radius, material, bodyType, CollisionGroups.PLAYER, CollisionGroups.OTHER, fixed);
-		body.setUserData(new BodyData(radius));
-		return body;
-	}
-
 	// bodytype if specified in instance variable
 	private Body makeBoxPart(Vector2 pos, float widthMultx, float heightMultx, float startingAngle, HashMap<String, Float> material) {
 		float partWidth = widthMultx*unit;
