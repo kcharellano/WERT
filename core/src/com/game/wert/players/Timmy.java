@@ -33,13 +33,15 @@ public class Timmy {
 	private Body torso;
 	private Body head;
 	
+	// position variable
+	private Vector2 pelvisPosInstance;
+	
 	
 	// Movement force modifiers
 	private float thighForce = 0.05f;
 	private float thighModifier = 0.8f;
 	private float calfForce = 0.05f;
 	private float calfModifier = 0.8f;
-	
 
 	// Unit used to build timmy
 	private float unit;
@@ -55,6 +57,7 @@ public class Timmy {
 		torso = buildTorso(origin);
 		head = attachHead(origin, torso);
 		pelvis = attachPelvis(origin, torso);
+		pelvisPosInstance = pelvis.getPosition();
 		//attachArm(origin, torso, -1);
 		//attachArm(origin, torso, 1);
 		Body[] rightLeg = attachLeg(origin, pelvis, -1, -20f, -25f);
@@ -84,6 +87,10 @@ public class Timmy {
 	public void moveRightCalf() {
 		rightCalf.applyAngularImpulse(calfModifier*-calfForce,  true);
 		leftCalf.applyAngularImpulse(calfForce, true);
+	}
+	
+	public float getXPos() {
+		return pelvisPosInstance.x;
 	}
 
 	private Body buildTorso(Vector2 origin) {

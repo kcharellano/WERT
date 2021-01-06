@@ -14,12 +14,13 @@ public class WertModel {
 	private BodyPartFactory bpf;
 	private KeyboardController controller;
 	private Timmy player;
-	
+	private WertContactListener wertContactListener;
 	
 	public WertModel (KeyboardController controller) {
 		this.controller = controller;
 		world = new World(new Vector2(0, -9.8f), true);
-		world.setContactListener(new WertContactListener());
+		wertContactListener = new WertContactListener();
+		world.setContactListener(wertContactListener);
 		bpf = new BodyPartFactory(world);
 		// create floor
 		Body floor = bpf.makeBoxBody(0, -15, 50, 10, FixtureDefFactory.FLOOR, BodyType.StaticBody, CollisionGroups.OTHER, CollisionGroups.PLAYER);
@@ -32,17 +33,19 @@ public class WertModel {
 	
 	// THIS IS WHERE THE CONTROLLER AFFECTS THE BODIES
 	public void logicStep(float delta) {
+		
 		//balancer(delta);
-		/*
+		
 		// TORSO CONTROLS
-		float force = 0.9f;
+		//float force = 0.9f;
 		if(controller.left){
-			//torso.applyForceToCenter(-force, 0, true);
-		}
-		if(controller.right){
-			//torso.applyForceToCenter(force, 0, true);
+			player.getXPos();
 		}
 		
+		if(controller.right){
+			//torso.applyForceToCenter(3f, 0, true);
+		}
+		/*
 		else if(controller.up){
 			//torso.applyForceToCenter(0, force, true);
 		}
