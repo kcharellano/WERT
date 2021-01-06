@@ -19,10 +19,11 @@ public class WertModel {
 	public WertModel (KeyboardController controller) {
 		this.controller = controller;
 		world = new World(new Vector2(0, -9.8f), true);
-		//world.setContactListener(new WertContactListener(this));
+		world.setContactListener(new WertContactListener());
 		bpf = new BodyPartFactory(world);
 		// create floor
-		bpf.makeBoxBody(0, -15, 50, 10, FixtureDefFactory.FLOOR, BodyType.StaticBody, CollisionGroups.OTHER, CollisionGroups.PLAYER);	
+		Body floor = bpf.makeBoxBody(0, -15, 50, 10, FixtureDefFactory.FLOOR, BodyType.StaticBody, CollisionGroups.OTHER, CollisionGroups.PLAYER);
+		floor.setUserData(new BodyData(50, 10, WertId.FLOOR));
 		float h = 8;
 				
 		player = new Timmy(world, h);
