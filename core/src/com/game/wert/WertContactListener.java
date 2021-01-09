@@ -7,21 +7,36 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 
 public class WertContactListener implements  ContactListener {
 	// Check for contact between timmy upper body 
-	private boolean terminalContact = false;
+	private boolean headContact = false;
+	private boolean torsoContact = false;
+	private boolean pelvisContact = false;
 	
-	public WertContactListener() {
-		// TODO
-	}
-
+	
 	@Override
 	public void beginContact(Contact contact) {
 		BodyData bodyDataA = (BodyData) contact.getFixtureA().getBody().getUserData();
 		BodyData bodyDataB = (BodyData) contact.getFixtureB().getBody().getUserData();
-		if(isFloor(bodyDataA) && isTerminalBodyPart(bodyDataB)) {
-			terminalContact = true;
+		if(isFloor(bodyDataA)) {
+			if(bodyDataB.wid == WertId.HEAD) {
+				headContact = true;
+			}
+			else if(bodyDataB.wid == WertId.TORSO) {
+				torsoContact = true;
+			}
+			else if(bodyDataB.wid == WertId.PELVIS) {
+				pelvisContact = true;
+			}
 		}
-		else if(isFloor(bodyDataB) && isTerminalBodyPart(bodyDataA)) {
-			terminalContact = true;
+		else if(isFloor(bodyDataB)) {
+			if(bodyDataA.wid == WertId.HEAD) {
+				headContact = true;
+			}
+			else if(bodyDataA.wid == WertId.TORSO) {
+				torsoContact = true;
+			}
+			else if(bodyDataA.wid == WertId.PELVIS) {
+				pelvisContact = true;
+			}
 		}
 	}
 
@@ -29,11 +44,27 @@ public class WertContactListener implements  ContactListener {
 	public void endContact(Contact contact) {		
 		BodyData bodyDataA = (BodyData) contact.getFixtureA().getBody().getUserData();
 		BodyData bodyDataB = (BodyData) contact.getFixtureB().getBody().getUserData();
-		if(isFloor(bodyDataA) && isTerminalBodyPart(bodyDataB)) {
-			terminalContact = false;
+		if(isFloor(bodyDataA)) {
+			if(bodyDataB.wid == WertId.HEAD) {
+				headContact = false;
+			}
+			else if(bodyDataB.wid == WertId.TORSO) {
+				torsoContact = false;
+			}
+			else if(bodyDataB.wid == WertId.PELVIS) {
+				pelvisContact = false;
+			}
 		}
-		else if(isFloor(bodyDataB) && isTerminalBodyPart(bodyDataA)) {
-			terminalContact = false;
+		else if(isFloor(bodyDataB)) {
+			if(bodyDataA.wid == WertId.HEAD) {
+				headContact = false;
+			}
+			else if(bodyDataA.wid == WertId.TORSO) {
+				torsoContact = false;
+			}
+			else if(bodyDataA.wid == WertId.PELVIS) {
+				pelvisContact = false;
+			}
 		}
 	}
 
@@ -53,12 +84,9 @@ public class WertContactListener implements  ContactListener {
 		return bodyData.wid == WertId.FLOOR;
 	}
 	
-	private boolean isTerminalBodyPart(BodyData bodyData) {
-		return bodyData.wid == WertId.HEAD || bodyData.wid == WertId.TORSO || bodyData.wid == WertId.PELVIS;
-	}
 
 	public boolean isTerminalContact() {
-		return terminalContact;
+		return	headContact || torsoContact || pelvisContact;
 	}
 
 }
