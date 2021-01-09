@@ -1,10 +1,14 @@
 package com.game.wert;
 
+
+import java.awt.event.KeyEvent;
+
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.World;
 import com.game.wert.controller.KeyboardController;
+import com.game.wert.controller.VirtualKeyPresser;
 import com.game.wert.players.Timmy;
 
 
@@ -15,13 +19,17 @@ public class WertModel {
 	private KeyboardController controller;
 	private Timmy player;
 	private WertContactListener wertContactListener;
+	//private Robot robot;
+	//private KeyEvent key;
+	private VirtualKeyPresser presser;
 	
-	public WertModel (KeyboardController controller) {
+	public WertModel (KeyboardController controller){
 		this.controller = controller;
 		world = new World(new Vector2(0, -9.8f), true);
 		wertContactListener = new WertContactListener();
 		world.setContactListener(wertContactListener);
 		bpf = new BodyPartFactory(world);
+		presser = new VirtualKeyPresser();
 		// create floor
 		Body floor = bpf.makeBoxBody(0, -15, 50, 10, FixtureDefFactory.FLOOR, BodyType.StaticBody, CollisionGroups.OTHER, CollisionGroups.PLAYER);
 		floor.setUserData(new BodyData(50, 10, WertId.FLOOR));
@@ -39,11 +47,17 @@ public class WertModel {
 		// TORSO CONTROLS
 		//float force = 0.9f;
 		if(controller.left){
-			player.getXPos();
+			System.out.println(player.getXPos());
+		}
+		else {
+			System.out.println();
 		}
 		
 		if(controller.right){
-			//torso.applyForceToCenter(3f, 0, true);
+			//Thread t = new Thread(presser);
+			//t.start();
+			presser.pressKey(KeyEvent.VK_LEFT);
+			
 		}
 		/*
 		else if(controller.up){
