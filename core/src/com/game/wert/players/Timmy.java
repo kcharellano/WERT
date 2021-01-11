@@ -14,7 +14,7 @@ import com.game.wert.WertId;
 import com.game.wert.controller.KeyboardController;
 import java.lang.Math;
 
-public class Timmy extends Player implements FourActionMoves, FourHingeType {
+public class Timmy extends QwopTypePlayer {
 	private World world;
 	private BodyPartFactory bodyPartFactory;
 	private BodyPartConnector bodyPartConnector;
@@ -368,6 +368,5 @@ public class Timmy extends Player implements FourActionMoves, FourHingeType {
 
 	
 
-	
 
 }
