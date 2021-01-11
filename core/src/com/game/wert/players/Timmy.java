@@ -61,7 +61,7 @@ public class Timmy extends Player implements FourActionMoves, FourHingeType {
 		this.unit = height/8;
 	}
 	
-	// Player abstract methods
+	// Player abstract methods -------------------
 	@Override
 	public void makePlayer(Vector2 origin) {
 		torso = buildTorso(origin);
@@ -88,6 +88,11 @@ public class Timmy extends Player implements FourActionMoves, FourHingeType {
 		
 	}
 
+	@Override
+	public Vector2 playerPosition() {
+		return pelvisPosInstance;
+	}
+	
 	// FourActionMoves Interface ------------------
 	
 	@Override
@@ -206,10 +211,6 @@ public class Timmy extends Player implements FourActionMoves, FourHingeType {
 	@Override
 	public float getMaxAngleD() {
 		return rightKnee.getLowerLimit() * RADTODEGREE;
-	}
-	
-	public float getXPos() {
-		return pelvisPosInstance.x;
 	}
 
 	private Body buildTorso(Vector2 origin) {
@@ -364,6 +365,8 @@ public class Timmy extends Player implements FourActionMoves, FourHingeType {
     	rightCalf.setFixedRotation(bool);
     	pelvis.setFixedRotation(bool);
 	}
+
+	
 
 	
 

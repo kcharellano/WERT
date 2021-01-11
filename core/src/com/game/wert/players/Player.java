@@ -9,4 +9,6 @@ public abstract class Player {
 	
 	// removes player from the world
 	public abstract void destroyPlayer();
+	
+	public abstract Vector2 playerPosition();
 }
