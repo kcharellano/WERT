@@ -3,7 +3,7 @@ package com.game.wert.controller;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.game.wert.players.WERTActionMovement;
+import com.game.wert.players.FourActionMoves;
 
 public class KeyboardController implements InputProcessor {
 	public boolean actionFlag = false;
@@ -13,12 +13,12 @@ public class KeyboardController implements InputProcessor {
 	
 	public boolean w, e, r, t;
 	
-	private WERTActionMovement playerActions;
+	private FourActionMoves playerActions;
 	
 	public KeyboardController() {
 	}
 	
-	public void setPlayer(WERTActionMovement player) {
+	public void setPlayer(FourActionMoves player) {
 		this.playerActions = player;
 	}
 	

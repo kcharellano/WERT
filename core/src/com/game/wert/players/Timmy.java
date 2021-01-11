@@ -5,14 +5,16 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.joints.RevoluteJoint;
 import com.game.wert.BodyData;
 import com.game.wert.BodyPartConnector;
 import com.game.wert.BodyPartFactory;
 import com.game.wert.CollisionGroups;
 import com.game.wert.WertId;
 import com.game.wert.controller.KeyboardController;
+import java.lang.Math;
 
-public class Timmy extends Player implements WERTActionMovement {
+public class Timmy extends Player implements FourActionMoves, FourHingeType {
 	private World world;
 	private BodyPartFactory bodyPartFactory;
 	private BodyPartConnector bodyPartConnector;
@@ -32,6 +34,12 @@ public class Timmy extends Player implements WERTActionMovement {
 	private Body torso;
 	private Body head;
 	
+	// Player leg joints
+	private RevoluteJoint leftHip;
+	private RevoluteJoint rightHip;
+	private RevoluteJoint leftKnee;
+	private RevoluteJoint rightKnee;
+	
 	// position variable
 	private Vector2 pelvisPosInstance;
 	
@@ -44,6 +52,7 @@ public class Timmy extends Player implements WERTActionMovement {
 
 	// Unit used to build timmy
 	private float unit;
+	private float RADTODEGREE = 180f / (float)Math.PI;
 	
 	public Timmy(World world, float height) {
 		this.world = world;
@@ -52,6 +61,7 @@ public class Timmy extends Player implements WERTActionMovement {
 		this.unit = height/8;
 	}
 	
+	// Player abstract methods
 	@Override
 	public void makePlayer(Vector2 origin) {
 		torso = buildTorso(origin);
@@ -60,12 +70,16 @@ public class Timmy extends Player implements WERTActionMovement {
 		pelvisPosInstance = pelvis.getPosition();
 		//attachArm(origin, torso, -1);
 		//attachArm(origin, torso, 1);
-		Body[] rightLeg = attachLeg(origin, pelvis, -1, -20f, -25f);
-		this.rightCalf = rightLeg[0];
-		this.rightThigh = rightLeg[1];
-		Body[] leftLeg = attachLeg(origin, pelvis, 1, 20f, -10f);
-		this.leftCalf = leftLeg[0];
-		this.leftThigh = leftLeg[1];		
+		Object[] rightLeg = attachLeg(origin, pelvis, -1, -20f, -25f);
+		rightCalf = (Body) rightLeg[0];
+		rightThigh = (Body) rightLeg[1];
+		rightKnee = (RevoluteJoint) rightLeg[2];
+		rightHip = (RevoluteJoint) rightLeg[3];
+		Object[] leftLeg = attachLeg(origin, pelvis, 1, 20f, -10f);
+		leftCalf = (Body) leftLeg[0];
+		leftThigh = (Body) leftLeg[1];
+		rightKnee = (RevoluteJoint) leftLeg[2];
+		rightHip = (RevoluteJoint) leftLeg[3];
 	}
 	
 	@Override
@@ -73,6 +87,8 @@ public class Timmy extends Player implements WERTActionMovement {
 		// TODO Auto-generated method stub
 		
 	}
+
+	// FourActionMoves Interface ------------------
 	
 	@Override
 	public void startActionW() {
@@ -129,6 +145,67 @@ public class Timmy extends Player implements WERTActionMovement {
 	@Override
 	public void stopActionT() {
 		setCalfRotationLock(true);
+	}
+	
+	// FourHingeType Interface --------------------
+	@Override
+	public float getHingeAngleA() {
+		return rightHip.getJointAngle() * RADTODEGREE;
+	}
+
+	@Override
+	public float getHingeAngleB() {
+		return leftHip.getJointAngle() * RADTODEGREE;
+	}
+
+	@Override
+	public float getHingeAngleC() {
+		return leftKnee.getJointAngle() * RADTODEGREE;
+	}
+
+	@Override
+	public float getHingeAngleD() {
+		return rightKnee.getJointAngle() * RADTODEGREE;
+	}
+	
+	@Override
+	public float getMaxAngleA() {
+		return rightHip.getUpperLimit() * RADTODEGREE;
+	}
+	
+	@Override
+	public float getMinAngleA() {
+		return rightHip.getLowerLimit() * RADTODEGREE;
+	}
+	
+	@Override
+	public float getMaxAngleB() {
+		return leftHip.getUpperLimit() * RADTODEGREE;
+	}
+	
+	@Override
+	public float getMinAngleB() {
+		return leftHip.getLowerLimit() * RADTODEGREE;
+	}
+	
+	@Override
+	public float getMaxAngleC() {
+		return leftKnee.getUpperLimit() * RADTODEGREE;
+	}
+	
+	@Override
+	public float getMinAngleC() {
+		return leftKnee.getLowerLimit() * RADTODEGREE;
+	}
+	
+	@Override
+	public float getMinAngleD() {
+		return rightKnee.getUpperLimit() * RADTODEGREE;
+	}
+	
+	@Override
+	public float getMaxAngleD() {
+		return rightKnee.getLowerLimit() * RADTODEGREE;
 	}
 	
 	public float getXPos() {
@@ -198,11 +275,10 @@ public class Timmy extends Player implements WERTActionMovement {
 		
 		Body forearm = makeBoxPart(new Vector2(origin.x, origin.y), 0.1f, 1f, 0, lightFlesh, false, WertId.BENIGN);
 		BodyData forearmData = (BodyData) forearm.getUserData();
-		bodyPartConnector.connectRevolute(bicep, forearm, new Vector2(0, heightRatio2*-(bicepData.halfHeight)), new Vector2(0, heightRatio2*(forearmData.halfHeight)), true, 0, 150);
-		
+		RevoluteJoint j = bodyPartConnector.connectRevolute(bicep, forearm, new Vector2(0, heightRatio2*-(bicepData.halfHeight)), new Vector2(0, heightRatio2*(forearmData.halfHeight)), true, 0, 150);
 	}
 	
-	private Body[] attachLeg(Vector2 origin, Body pelvis, int direction, float thighAngle, float kneeAngle) {
+	private Object[] attachLeg(Vector2 origin, Body pelvis, int direction, float thighAngle, float kneeAngle) {
 		float widthRatio = 0.75f;
 		float heightRatio = 0.95f;
 		float heightRatio2 = 0.9f;
@@ -220,7 +296,7 @@ public class Timmy extends Player implements WERTActionMovement {
 		
 		// connect thigh to pelvis joint
 		BodyData thighData = (BodyData) thigh.getUserData();
-		bodyPartConnector.connectRevolute(pelvis, thigh, new Vector2((direction*0)*pelvisData.halfWidth, heightRatio*-(pelvisData.halfHeight)), new Vector2(0, heightRatio*(thighData.halfHeight)), true, -80, 80);
+		RevoluteJoint hipJoint = bodyPartConnector.connectRevolute(pelvis, thigh, new Vector2((direction*0)*pelvisData.halfWidth, heightRatio*-(pelvisData.halfHeight)), new Vector2(0, heightRatio*(thighData.halfHeight)), true, -80, 80);
 		
 		// create knee
 		Body kneeCap = makeJointPart(origin.x + 0, origin.y + -8f, 0.13f, lightFlesh);
@@ -231,7 +307,7 @@ public class Timmy extends Player implements WERTActionMovement {
 		// create calf
 		Body calf = makeBoxPart(new Vector2(origin.x + (direction*0.0325f), origin.y + -8.8f), 0.1f, 1.8f, kneeAngle, lightFlesh, true, WertId.BENIGN);
 		BodyData calfData = (BodyData) calf.getUserData();
-		bodyPartConnector.connectRevolute(thigh, calf, new Vector2(0, heightRatio2*-(thighData.halfHeight)), new Vector2(0, heightRatio2*calfData.halfHeight), true, -150f, 0);
+		RevoluteJoint kneeJoint =  bodyPartConnector.connectRevolute(thigh, calf, new Vector2(0, heightRatio2*-(thighData.halfHeight)), new Vector2(0, heightRatio2*calfData.halfHeight), true, -150f, 0);
 		//bodyPartConnector.connectRevolute(kneeCap, calf, new Vector2(0, 0), new Vector2(0, heightRatio2*calfData.halfHeight), true, -150f, 0);
 		
 		// create foot
@@ -239,8 +315,8 @@ public class Timmy extends Player implements WERTActionMovement {
 		BodyData footData = (BodyData) foot.getUserData();
 		bodyPartConnector.connectRevolute(calf, foot, new Vector2(0, heightRatio2*-(calfData.halfHeight)), new Vector2(heightRatio2*-(footData.halfHeight), 0), true, -10f, 15f);
 		
-		Body[] bodyArr = {calf, thigh};
-		return bodyArr;
+		Object[] arr = {calf, thigh, kneeJoint, hipJoint};
+		return arr;
 	}
 	
 	//TODO: Consider removing these methods and putting their functionality in the factories
@@ -288,7 +364,7 @@ public class Timmy extends Player implements WERTActionMovement {
     	rightCalf.setFixedRotation(bool);
     	pelvis.setFixedRotation(bool);
 	}
-	
 
 	
+
 }
