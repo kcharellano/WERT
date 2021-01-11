@@ -2,12 +2,9 @@ package com.game.wert.controller;
 
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.game.wert.players.WERTActionMovement;
 
-public class KeyboardController implements InputProcessor {
-	public boolean actionFlag = false;
-	public char action = 'x';
+public class HumanController implements InputProcessor {
 	
 	public boolean left, right, up, down;
 	
@@ -15,7 +12,7 @@ public class KeyboardController implements InputProcessor {
 	
 	private WERTActionMovement playerActions;
 	
-	public KeyboardController() {
+	public HumanController() {
 	}
 	
 	public void setPlayer(WERTActionMovement player) {
@@ -46,30 +43,22 @@ public class KeyboardController implements InputProcessor {
 	            break;
 	        case Keys.W:
 	        	w = true;
-	        	actionFlag = true;
-	        	action = 'w';
-	        	//playerActions.startActionW();
+	        	playerActions.startActionW();
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.E:
 	        	e = true;
-	        	actionFlag = true;
-	        	action = 'e';
-	        	//playerActions.startActionE();
+	        	playerActions.startActionE();
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.R:
 	        	r = true;
-	        	actionFlag = true;
-	        	action = 'r';
-	        	//playerActions.startActionR();
+	        	playerActions.startActionR();
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.T:
 	        	t = true;
-	        	actionFlag = true;
-	        	action = 't';
-	        	//playerActions.startActionT();
+	        	playerActions.startActionT();
 	        	keyProcessed = true;
         }
 	return keyProcessed;	//  return our peyProcessed flag
@@ -99,22 +88,22 @@ public class KeyboardController implements InputProcessor {
 	            break;
 	        case Keys.W:
 	        	w = false;
-	        	//playerActions.stopActionW();
+	        	playerActions.stopActionW();
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.E:
 	        	e = false;
-	        	//playerActions.stopActionE();
+	        	playerActions.stopActionE();
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.R:
 	        	r = false;
-	        	//playerActions.stopActionR();
+	        	playerActions.stopActionR();
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.T:
 	        	t = false;
-	        	//playerActions.stopActionR();
+	        	playerActions.stopActionR();
 	        	keyProcessed = true;
         }
 	return keyProcessed;	//  return our peyProcessed flag
@@ -123,9 +112,6 @@ public class KeyboardController implements InputProcessor {
 	// Activated every time the keyboard sends a character. This can be called many times when a key is held down
 	@Override
 	public boolean keyTyped(char character) {
-		if(character == 'w') {
-			System.out.println("W TYPED");
-		}
 		return false;
 	}
 

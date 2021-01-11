@@ -12,11 +12,10 @@ import com.game.wert.CollisionGroups;
 import com.game.wert.WertId;
 import com.game.wert.controller.KeyboardController;
 
-public class Timmy {
+public class Timmy extends Player implements WERTActionMovement {
 	private World world;
 	private BodyPartFactory bodyPartFactory;
 	private BodyPartConnector bodyPartConnector;
-
 	
 	// fixture properties for body part creation
 	private HashMap<String, Float> lightFlesh = makeFleshProperties(0.05f, 0.01f, 0f);
@@ -24,7 +23,7 @@ public class Timmy {
 	private HashMap<String, Float> superLightFlesh = makeFleshProperties(0.01f, 0.2f, 0f);
 	private HashMap<String, Float> shoeMaterial = makeFleshProperties(0.1f, 0.9f, 0f);
 	
-	// Controllable body parts
+	// Player body parts
 	private Body rightThigh;
 	private Body rightCalf;
 	private Body leftThigh;
@@ -53,7 +52,8 @@ public class Timmy {
 		this.unit = height/8;
 	}
 	
-	public void makeTimmy(Vector2 origin, KeyboardController controller) {
+	@Override
+	public void makePlayer(Vector2 origin) {
 		torso = buildTorso(origin);
 		head = attachHead(origin, torso);
 		pelvis = attachPelvis(origin, torso);
@@ -65,28 +65,70 @@ public class Timmy {
 		this.rightThigh = rightLeg[1];
 		Body[] leftLeg = attachLeg(origin, pelvis, 1, 20f, -10f);
 		this.leftCalf = leftLeg[0];
-		this.leftThigh = leftLeg[1];
-		controller.setControllableParts(rightCalf, rightThigh, leftCalf, leftThigh, pelvis);
+		this.leftThigh = leftLeg[1];		
 	}
-
-	public void moveRightThigh() {
+	
+	@Override
+	public void destroyPlayer() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void startActionW() {
+		// move right thigh
+		// turn right thigh clockwise and left thigh counter clockwise
+		setThighRotationLock(false);
 		rightThigh.applyAngularImpulse(thighForce, true);
 		leftThigh.applyAngularImpulse(thighModifier*-thighForce, true);
 	}
 
-	public void moveLeftThigh() {
+	@Override
+	public void startActionE() {
+		// move left thigh
+		// turn left thigh clockwise and right thigh counter clockwise
+		setThighRotationLock(false);
 		leftThigh.applyAngularImpulse(thighForce, true);
 		rightThigh.applyAngularImpulse(thighModifier*-thighForce, true);
 	}
 
-	public void moveLeftCalf() {
+	@Override
+	public void startActionR() {
+		// move left calf
+		// turn left calf counter clockwise and right calf clockwise
+		setCalfRotationLock(false);
 		leftCalf.applyAngularImpulse(calfModifier*-calfForce,  true);
 		rightCalf.applyAngularImpulse(calfForce, true);
+		
 	}
-	
-	public void moveRightCalf() {
+
+	@Override
+	public void startActionT() {
+		// move right calf
+		// turn right calf counter clockwise and left calf clockwise
+		setCalfRotationLock(false);
 		rightCalf.applyAngularImpulse(calfModifier*-calfForce,  true);
 		leftCalf.applyAngularImpulse(calfForce, true);
+	}
+
+	@Override
+	public void stopActionW() {
+		setThighRotationLock(true);
+	}
+
+	@Override
+	public void stopActionE() {
+		setThighRotationLock(true);
+	}
+
+	@Override
+	public void stopActionR() {
+		setCalfRotationLock(true);
+	}
+
+	@Override
+	public void stopActionT() {
+		setCalfRotationLock(true);
 	}
 	
 	public float getXPos() {
@@ -201,6 +243,7 @@ public class Timmy {
 		return bodyArr;
 	}
 	
+	//TODO: Consider removing these methods and putting their functionality in the factories
 	private Body makeJointPart(float posx, float posy, float radiusMultx, HashMap<String, Float> material) {
 		float radius = unit * radiusMultx;
 		Body body = bodyPartFactory.makeCircleBody(posx, posy, radius, material, BodyType.DynamicBody, CollisionGroups.PLAYER, CollisionGroups.OTHER, false);
@@ -232,4 +275,20 @@ public class Timmy {
 		prop.put("restitution", rest);
 		return prop;
 	}
+	
+	private void setThighRotationLock(boolean bool) {
+		rightThigh.setFixedRotation(bool);
+    	leftThigh.setFixedRotation(bool);
+    	pelvis.setFixedRotation(bool);
+	}
+	
+	
+	private void setCalfRotationLock(boolean bool) {
+		leftCalf.setFixedRotation(bool);
+    	rightCalf.setFixedRotation(bool);
+    	pelvis.setFixedRotation(bool);
+	}
+	
+
+	
 }

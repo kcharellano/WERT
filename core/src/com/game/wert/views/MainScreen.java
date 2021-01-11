@@ -20,14 +20,14 @@ public class MainScreen implements Screen {
 	public MainScreen(WertGame wertGame) {
 		parent = wertGame;
 		cam = new OrthographicCamera(32, 24);
-		controller = new KeyboardController();
-		model = new WertModel(controller);
+		//controller = new KeyboardController();
+		model = new WertModel();
 		debugRenderer = new Box2DDebugRenderer(true, true, false, true, true, true);
 	}
 
 	@Override
 	public void show() {
-		Gdx.input.setInputProcessor(controller);
+		//Gdx.input.setInputProcessor(controller);
 	}
 
 	@Override
