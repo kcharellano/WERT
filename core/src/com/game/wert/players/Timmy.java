@@ -1,5 +1,6 @@
 package com.game.wert.players;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -30,18 +31,28 @@ public class Timmy extends QwopTypePlayer {
 	private Body rightCalf;
 	private Body leftThigh;
 	private Body leftCalf;
-	private Body pelvis;
 	private Body torso;
-	private Body head;
+	private Body pelvis;
+
 	
 	// References to important joints
-	private RevoluteJoint leftHip;
-	private RevoluteJoint rightHip;
-	private RevoluteJoint leftKnee;
-	private RevoluteJoint rightKnee;
+	private RevoluteJoint leftHipJoint;
+	private RevoluteJoint rightHipJoint;
+	private RevoluteJoint leftKneeJoint;
+	private RevoluteJoint rightKneeJoint;
+	
+	// References to the rest of the body parts
+	private ArrayList<Body> parts;
+	
+	private Body head;
+	private Body neck;
+	private Body lowerSpine;
+	private Body leftFoot;
+	private Body rightFoot;
+	private Body leftKnee;
+	private Body rightKnee;
 	
 	// position variable
-	private Vector2 pelvisPosInstance;
 	
 	// Movement force modifiers
 	private float thighForce = 0.05f;
@@ -52,6 +63,7 @@ public class Timmy extends QwopTypePlayer {
 	// Unit used to build timmy
 	private float unit;
 	private float RADTODEGREE = 180f / (float)Math.PI;
+	private boolean exists = false;
 	
 	public Timmy(World world, float height) {
 		this.world = world;
@@ -62,44 +74,64 @@ public class Timmy extends QwopTypePlayer {
 	
 	// Player abstract methods -------------------
 	@Override
+	public boolean doesExist() {
+		return exists;
+	}
+	@Override
 	public void makePlayer(Vector2 refPoint) {
 		// The center of the torso is the refPoint of the player
 		
 		// create pelvis, torso and head
-		torso = buildTorso(refPoint);
-		head = attachHead(refPoint, torso);
-		pelvis = attachPelvis(refPoint, torso);
-		pelvisPosInstance = pelvis.getPosition();
+		buildTorso(refPoint);
+		attachHead(refPoint, torso);
+		attachPelvis(refPoint, torso);
 		Object[] holder;
-		holder = attachThigh(pelvis.getWorldCenter(), pelvis, -1, -20f);
 		
 		// Create right leg
-		rightHip = (RevoluteJoint) holder[0];
-		rightThigh = (Body) holder[1];
+		holder = attachThigh(pelvis.getWorldCenter(), pelvis, -1, -20f);
+		rightHipJoint = (RevoluteJoint) holder[0];
+		this.rightThigh = (Body) holder[1];
 		holder = attachCalf(rightThigh.getWorldCenter(), rightThigh, -1, -25f);
-		rightKnee = (RevoluteJoint) holder[0];
+		rightKneeJoint = (RevoluteJoint) holder[0];
 		rightCalf = (Body) holder[1];
-		attachFoot(rightCalf.getWorldCenter(), rightCalf);
+		rightKnee = (Body) holder[2];
+		rightFoot = attachFoot(rightCalf.getWorldCenter(), rightCalf);
 		
 		// Create left leg
 		holder = attachThigh(pelvis.getWorldCenter(), pelvis, 1, 20f);
-		leftHip = (RevoluteJoint) holder[0];
+		leftHipJoint = (RevoluteJoint) holder[0];
 		leftThigh = (Body) holder[1];
 		holder = attachCalf(leftThigh.getWorldCenter(), leftThigh, 1, -10f);
-		leftKnee = (RevoluteJoint) holder[0];
+		leftKneeJoint = (RevoluteJoint) holder[0];
 		leftCalf = (Body) holder[1];
-		attachFoot(leftCalf.getWorldCenter(), leftCalf);
+		leftKnee = (Body) holder[2];
+		leftFoot = attachFoot(leftCalf.getWorldCenter(), leftCalf);
+		
+		exists = true;
 	}
 	
 	@Override
 	public void destroyPlayer() {
-		// TODO Auto-generated method stub
-		
+		world.destroyBody(head);
+		world.destroyBody(neck);
+		world.destroyBody(lowerSpine);
+		world.destroyBody(leftFoot);
+		world.destroyBody(rightFoot);
+		world.destroyBody(leftKnee);
+		world.destroyBody(rightKnee);
+		world.destroyBody(rightThigh);
+		world.destroyBody(rightCalf);
+		world.destroyBody(leftThigh);
+		world.destroyBody(leftCalf);
+		world.destroyBody(torso);
+		world.destroyBody(pelvis);
+		nullifyBodyRefs();
+		exists = false;
 	}
 
 	@Override
 	public Vector2 playerPosition() {
-		return pelvisPosInstance;
+		return pelvis.getPosition();
 	}
 	
 	// FourActionMoves Interface ------------------
@@ -164,81 +196,80 @@ public class Timmy extends QwopTypePlayer {
 	// FourHingeType Interface --------------------
 	@Override
 	public float getHingeAngleA() {
-		return rightHip.getJointAngle() * RADTODEGREE;
+		return rightHipJoint.getJointAngle() * RADTODEGREE;
 	}
 
 	@Override
 	public float getHingeAngleB() {
-		return leftHip.getJointAngle() * RADTODEGREE;
+		return leftHipJoint.getJointAngle() * RADTODEGREE;
 	}
 
 	@Override
 	public float getHingeAngleC() {
-		return leftKnee.getJointAngle() * RADTODEGREE;
+		return leftKneeJoint.getJointAngle() * RADTODEGREE;
 	}
 
 	@Override
 	public float getHingeAngleD() {
-		return rightKnee.getJointAngle() * RADTODEGREE;
+		return rightKneeJoint.getJointAngle() * RADTODEGREE;
 	}
 	
 	@Override
 	public float getMaxAngleA() {
-		return rightHip.getUpperLimit() * RADTODEGREE;
+		return rightHipJoint.getUpperLimit() * RADTODEGREE;
 	}
 	
 	@Override
 	public float getMinAngleA() {
-		return rightHip.getLowerLimit() * RADTODEGREE;
+		return rightHipJoint.getLowerLimit() * RADTODEGREE;
 	}
 	
 	@Override
 	public float getMaxAngleB() {
-		return leftHip.getUpperLimit() * RADTODEGREE;
+		return leftHipJoint.getUpperLimit() * RADTODEGREE;
 	}
 	
 	@Override
 	public float getMinAngleB() {
-		return leftHip.getLowerLimit() * RADTODEGREE;
+		return leftHipJoint.getLowerLimit() * RADTODEGREE;
 	}
 	
 	@Override
 	public float getMaxAngleC() {
-		return leftKnee.getUpperLimit() * RADTODEGREE;
+		return leftKneeJoint.getUpperLimit() * RADTODEGREE;
 	}
 	
 	@Override
 	public float getMinAngleC() {
-		return leftKnee.getLowerLimit() * RADTODEGREE;
+		return leftKneeJoint.getLowerLimit() * RADTODEGREE;
 	}
 	
 	@Override
 	public float getMinAngleD() {
-		return rightKnee.getUpperLimit() * RADTODEGREE;
+		return rightKneeJoint.getUpperLimit() * RADTODEGREE;
 	}
 	
 	@Override
 	public float getMaxAngleD() {
-		return rightKnee.getLowerLimit() * RADTODEGREE;
+		return rightKneeJoint.getLowerLimit() * RADTODEGREE;
 	}
 
-	private Body buildTorso(Vector2 refPoint) {
+	private void buildTorso(Vector2 refPoint) {
 		Vector2 torsoPos = new Vector2(refPoint.x, refPoint.y);
-		Body torso = makeBoxPart(torsoPos, 0.45f, 1.3f, 0, superLightFlesh, WertId.TORSO);
-		return torso;
+		this.torso = makeBoxPart(torsoPos, 0.45f, 1.3f, 0, superLightFlesh, WertId.TORSO);
 	}
 
-	private Body attachHead(Vector2 refPoint, Body torso) {
+	private void attachHead(Vector2 refPoint, Body torso) {
 		BodyData torsoData = (BodyData) torso.getUserData();
 		
 		// create head
 		Vector2 headPos = new Vector2(refPoint.x, refPoint.y + torsoData.height);
-		Body head = makeBoxPart(headPos, 0.4f, 1f, 0, superLightFlesh, WertId.HEAD);
+		this.head = makeBoxPart(headPos, 0.4f, 1f, 0, superLightFlesh, WertId.HEAD);
 		BodyData headData = (BodyData) head.getUserData();
 		
 		// create neck
 		Vector2 neckPos = new Vector2(refPoint.x, refPoint.y + torsoData.halfHeight);
-		Body neck = makeBoxPart(neckPos, 0.1f, 0.3f, 0, medFlesh, WertId.HEAD);
+		this.neck = makeBoxPart(neckPos, 0.1f, 0.3f, 0, medFlesh, WertId.HEAD);
 		BodyData neckData = (BodyData) neck.getUserData();
 		
 		// connect head to neck
@@ -251,7 +282,6 @@ public class Timmy extends QwopTypePlayer {
 		Vector2 torsoAnchor = new Vector2(0, lengthRatio*torsoData.halfHeight);
 		Vector2 neckAnchorBottom = new Vector2(0, lengthRatio*-(neckData.halfHeight));
 		bodyPartConnector.connectWeld(neck, torso, neckAnchorBottom, torsoAnchor);
-		return head;
 	}
 	
 	private Body attachPelvis(Vector2 refPoint, Body torso) {
@@ -259,7 +289,7 @@ public class Timmy extends QwopTypePlayer {
 
 		// create lower spine
 		Vector2 lowerSpinePos = new Vector2(refPoint.x, refPoint.y + -(torsoData.halfHeight));
-		Body lowerSpine = makeBoxPart(lowerSpinePos, 0.1f, 0.4f, 0, medFlesh, WertId.PELVIS);
+		this.lowerSpine = makeBoxPart(lowerSpinePos, 0.1f, 0.4f, 0, medFlesh, WertId.PELVIS);
 		BodyData lowerSpineData = (BodyData) lowerSpine.getUserData();
 		
 		// connect lower spine and torso
@@ -271,7 +301,7 @@ public class Timmy extends QwopTypePlayer {
 		// create pelvis
 		Vector2 pelvisPos = new Vector2(refPoint.x, refPoint.y + -(torsoData.height));
 		// lock pelvis rotation
-		Body pelvis = makeBoxPart(pelvisPos, 0.6f, 1, 0, lightFlesh, true, WertId.PELVIS);
+		this.pelvis = makeBoxPart(pelvisPos, 0.6f, 1, 0, lightFlesh, true, WertId.PELVIS);
 		BodyData pelvisData = (BodyData) pelvis.getUserData();
 		
 		// connect lowerspine and pelvis
@@ -280,30 +310,6 @@ public class Timmy extends QwopTypePlayer {
 		bodyPartConnector.connectWeld(lowerSpine, pelvis, lowerSpineAnchorBottom, pelvisAnchorTop);
 		
 		return pelvis;
-	}
-	
-	// TODO: Remove
-	private void attachArm(Vector2 refPoint, Body torso, int direction) {
-		/*
-		Body shoulder = makeJointPart(refPoint.x, refPoint.y, 0.13f, lightFlesh);
-		float widthRatio = 0.90f;
-		float heightRatio = 0.70f;
-		float heightRatio2 = 0.90f;
-		BodyData torsoData = (BodyData) torso.getUserData();
-		bodyPartConnector.connectWeld(torso, shoulder, new Vector2(widthRatio * (direction*torsoData.halfWidth), heightRatio*(torsoData.halfHeight)), new Vector2(0,0));
-		
-		Body bicep = makeBoxPart(new Vector2(refPoint.x, refPoint.y), 0.1f, 1.3f, 0, lightFlesh, false, WertId.BENIGN);
-		BodyData bicepData = (BodyData) bicep.getUserData();
-		bodyPartConnector.connectRevolute(torso, bicep, new Vector2(widthRatio * (direction*torsoData.halfWidth), heightRatio*(torsoData.halfHeight)), new Vector2(0, heightRatio2*(bicepData.halfHeight)), false, 0, 0);
-		
-		Body elbow = makeJointPart(refPoint.x, refPoint.y, 0.13f, lightFlesh);
-		bodyPartConnector.connectWeld(elbow, bicep, new Vector2(0,0), new Vector2(0, heightRatio2*-(bicepData.halfHeight)));
-
-		
-		Body forearm = makeBoxPart(new Vector2(refPoint.x, refPoint.y), 0.1f, 1f, 0, lightFlesh, false, WertId.BENIGN);
-		BodyData forearmData = (BodyData) forearm.getUserData();
-		RevoluteJoint j = bodyPartConnector.connectRevolute(bicep, forearm, new Vector2(0, heightRatio2*-(bicepData.halfHeight)), new Vector2(0, heightRatio2*(forearmData.halfHeight)), true, 0, 150);
-		*/
 	}
 	
 	// returns a reference to thigh and joint that connects thigh and pelvis
@@ -348,11 +354,11 @@ public class Timmy extends QwopTypePlayer {
 		Vector2 calfAnchor = new Vector2(0, lengthRatio*calfData.halfHeight);
 		RevoluteJoint kneeJoint =  bodyPartConnector.connectRevolute(thigh, calf, thighAnchor, calfAnchor, true, -150f, 0);
 		
-		Object[] arr = {kneeJoint, calf};
+		Object[] arr = {kneeJoint, calf, kneeCap};
 		return arr;
 	}
 	
-	private void attachFoot(Vector2 refPoint, Body calf) {
+	private Body attachFoot(Vector2 refPoint, Body calf) {
 		BodyData calfData = (BodyData) calf.getUserData();
 		float lengthRatio = 0.9f;
 		
@@ -366,6 +372,7 @@ public class Timmy extends QwopTypePlayer {
 		Vector2 calfAnchor = new Vector2(0, lengthRatio*-(calfData.halfHeight));
 		Vector2 footAnchor = new Vector2(lengthRatio*-(footData.halfHeight), 0);
 		bodyPartConnector.connectRevolute(calf, foot, calfAnchor, footAnchor, true, -10f, 15f);
+		return foot;
 	}
 		
 	
@@ -386,7 +393,6 @@ public class Timmy extends QwopTypePlayer {
 		body.setUserData(new BodyData(partWidth, partHeight, id));
 		return body;
 	}
-	
 	
 	private Body makeBoxPart(Vector2 pos, float widthMultx, float heightMultx, float startingAngle, HashMap<String, Float> material, boolean fixed, WertId wid) {
 		float partWidth = widthMultx*unit;
@@ -412,11 +418,26 @@ public class Timmy extends QwopTypePlayer {
     	pelvis.setFixedRotation(bool);
 	}
 	
-	
 	private void setCalfRotationLock(boolean bool) {
 		leftCalf.setFixedRotation(bool);
     	rightCalf.setFixedRotation(bool);
     	pelvis.setFixedRotation(bool);
 	}
-
+	
+	private void nullifyBodyRefs() {
+		rightThigh = null;
+		rightCalf = null;
+		leftThigh = null;
+		leftCalf = null;
+		torso = null;
+		pelvis = null;
+		head = null;
+		neck = null;
+		lowerSpine = null;
+		leftFoot = null;
+		rightFoot = null;
+		leftKnee = null;
+		rightKnee = null;
+	}
+	
 }

@@ -73,22 +73,29 @@ public class WertModel {
 		*/
 		
 		// HUMAN CONTROLS
-		if(hcontroller.w) {
-			player.startActionW();
-		}
-		else if(hcontroller.e) {
-			player.startActionE();
-		}
-		else if(hcontroller.r) {
-			player.startActionR();
-		}
-		else if(hcontroller.t) {
-			player.startActionT();
+		if(player.doesExist()) {
+			if(hcontroller.w) {
+				player.startActionW();
+			}
+			else if(hcontroller.e) {
+				player.startActionE();
+			}
+			else if(hcontroller.r) {
+				player.startActionR();
+			}
+			else if(hcontroller.t) {
+				player.startActionT();
+			}
+			
+			if(wertContactListener.isTerminalContact()) {
+				System.out.println("IS TERMINAL CONTACT");
+				if(player.doesExist()) {
+					player.destroyPlayer();
+					player.makePlayer(new Vector2(0,0));
+				}
+			}
 		}
 		
-		if(wertContactListener.isTerminalContact()) {
-			System.out.println("IS TERMINAL CONTACT");
-		}
 		world.step(delta , 6, 2);
 	}
 	/*

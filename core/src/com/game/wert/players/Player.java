@@ -10,5 +10,9 @@ public abstract class Player {
 	// removes player from the world
 	public abstract void destroyPlayer();
 	
+	// return player's position
 	public abstract Vector2 playerPosition();
+	
+	// returns if the player currently exists in the world
+	public abstract boolean doesExist();
 }
