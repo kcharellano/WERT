@@ -40,7 +40,7 @@ public class WertModel {
 		floor.setUserData(new BodyData(50, 10, WertId.FLOOR));
 		float h = 8;
 		player = new Timmy(world, h);
-		player.makePlayer(new Vector2(0,4));
+		player.makePlayer(new Vector2(0,0));
 		hcontroller.setPlayer(player);
 		Gdx.input.setInputProcessor(hcontroller);
 	}
