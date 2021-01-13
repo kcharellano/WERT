@@ -36,7 +36,7 @@ public class WertModel {
 		bpf = new BodyPartFactory(world);
 		presser = new VirtualKeyPresser();
 		// create floor
-		Body floor = bpf.makeBoxBody(0, -15, 50, 10, FixtureDefFactory.FLOOR, BodyType.StaticBody, CollisionGroups.OTHER, CollisionGroups.PLAYER);
+		Body floor = bpf.makeBoxBody(new Vector2(0f, -15f), 50, 10, FixtureDefFactory.FLOOR, BodyType.StaticBody, CollisionGroups.OTHER, CollisionGroups.PLAYER);
 		floor.setUserData(new BodyData(50, 10, WertId.FLOOR));
 		float h = 8;
 		player = new Timmy(world, h);
@@ -94,6 +94,7 @@ public class WertModel {
 					player.makePlayer(new Vector2(0,0));
 				}
 			}
+			System.out.println(player.getHingeAngleA()+"|"+player.getHingeAngleD());
 		}
 		
 		world.step(delta , 6, 2);

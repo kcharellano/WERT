@@ -60,7 +60,9 @@ public class Timmy extends QwopTypePlayer {
 
 	// Unit used to build timmy
 	private float unit;
+	// convert radian to degree
 	private float RADTODEGREE = 180f / (float)Math.PI;
+	private float DEGREETORAD = (float) Math.PI / 180f;
 	private boolean exists = false;
 	
 	public Timmy(World world, float height) {
@@ -92,7 +94,7 @@ public class Timmy extends QwopTypePlayer {
 		// Create right leg
 		holder = attachThigh(pelvis.getWorldCenter(), pelvis, -1, -20f);
 		rightHipJoint = (RevoluteJoint) holder[0];
-		this.rightThigh = (Body) holder[1];
+		rightThigh = (Body) holder[1];
 		holder = attachCalf(rightThigh.getWorldCenter(), rightThigh, -1, -25f);
 		rightKneeJoint = (RevoluteJoint) holder[0];
 		rightCalf = (Body) holder[1];
@@ -144,6 +146,7 @@ public class Timmy extends QwopTypePlayer {
 		// move right thigh
 		// turn right thigh clockwise and left thigh counter clockwise
 		setThighRotationLock(false);
+		//rightThigh.setTransform(rightThigh.getPosition(), (rightThigh.getAngle() + (1.0f * DEGREETORAD)) % (360 * DEGREETORAD));
 		rightThigh.applyAngularImpulse(thighForce, true);
 		leftThigh.applyAngularImpulse(thighModifier*-thighForce, true);
 	}
@@ -200,63 +203,63 @@ public class Timmy extends QwopTypePlayer {
     // FourHingeType Interface
     //================================================================================
 	@Override
-	public float getHingeAngleA() {
-		return rightHipJoint.getJointAngle() * RADTODEGREE;
+	public int getHingeAngleA() {
+		return Math.round(rightHipJoint.getJointAngle() * RADTODEGREE);
 	}
 
 	@Override
-	public float getHingeAngleB() {
-		return leftHipJoint.getJointAngle() * RADTODEGREE;
+	public int getHingeAngleB() {
+		return Math.round(leftHipJoint.getJointAngle() * RADTODEGREE);
 	}
 
 	@Override
-	public float getHingeAngleC() {
-		return leftKneeJoint.getJointAngle() * RADTODEGREE;
+	public int getHingeAngleC() {
+		return Math.round(leftKneeJoint.getJointAngle() * RADTODEGREE);
 	}
 
 	@Override
-	public float getHingeAngleD() {
-		return rightKneeJoint.getJointAngle() * RADTODEGREE;
+	public int getHingeAngleD() {
+		return Math.round(rightKneeJoint.getJointAngle() * RADTODEGREE);
 	}
 	
 	@Override
-	public float getMaxAngleA() {
-		return rightHipJoint.getUpperLimit() * RADTODEGREE;
+	public int getMaxAngleA() {
+		return Math.round(rightHipJoint.getUpperLimit() * RADTODEGREE);
 	}
 	
 	@Override
-	public float getMinAngleA() {
-		return rightHipJoint.getLowerLimit() * RADTODEGREE;
+	public int getMinAngleA() {
+		return Math.round(rightHipJoint.getLowerLimit() * RADTODEGREE);
 	}
 	
 	@Override
-	public float getMaxAngleB() {
-		return leftHipJoint.getUpperLimit() * RADTODEGREE;
+	public int getMaxAngleB() {
+		return Math.round(leftHipJoint.getUpperLimit() * RADTODEGREE);
 	}
 	
 	@Override
-	public float getMinAngleB() {
-		return leftHipJoint.getLowerLimit() * RADTODEGREE;
+	public int getMinAngleB() {
+		return Math.round(leftHipJoint.getLowerLimit() * RADTODEGREE);
 	}
 	
 	@Override
-	public float getMaxAngleC() {
-		return leftKneeJoint.getUpperLimit() * RADTODEGREE;
+	public int getMaxAngleC() {
+		return Math.round(leftKneeJoint.getUpperLimit() * RADTODEGREE);
 	}
 	
 	@Override
-	public float getMinAngleC() {
-		return leftKneeJoint.getLowerLimit() * RADTODEGREE;
+	public int getMinAngleC() {
+		return Math.round(leftKneeJoint.getLowerLimit() * RADTODEGREE);
 	}
 	
 	@Override
-	public float getMinAngleD() {
-		return rightKneeJoint.getUpperLimit() * RADTODEGREE;
+	public int getMinAngleD() {
+		return Math.round(rightKneeJoint.getUpperLimit() * RADTODEGREE);
 	}
 	
 	@Override
-	public float getMaxAngleD() {
-		return rightKneeJoint.getLowerLimit() * RADTODEGREE;
+	public int getMaxAngleD() {
+		return Math.round(rightKneeJoint.getLowerLimit() * RADTODEGREE);
 	}
 	
 	//================================================================================

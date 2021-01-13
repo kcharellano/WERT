@@ -4,29 +4,28 @@ public interface FourHingeType {
 	// Players that implement this interface have at least 4 hinges
 	// that form important angles
 	
-	public float getHingeAngleA();
+	public int getHingeAngleA();
 	
-	public float getMaxAngleA();
+	public int getMaxAngleA();
 	
-	public float getMinAngleA();
+	public int getMinAngleA();
 	
-	public float getHingeAngleB();
+	public int getHingeAngleB();
 	
-	public float getMaxAngleB();
+	public int getMaxAngleB();
 	
-	public float getMinAngleB();
+	public int getMinAngleB();
 	
-	public float getHingeAngleC();
+	public int getHingeAngleC();
 	
-	public float getMaxAngleC();
+	public int getMaxAngleC();
 	
-	public float getMinAngleC();
+	public int getMinAngleC();
 
-	public float getHingeAngleD();
+	public int getHingeAngleD();
 	
-	public float getMinAngleD();
+	public int getMinAngleD();
 
-	public float getMaxAngleD();
+	public int getMaxAngleD();
 
-	
 }
