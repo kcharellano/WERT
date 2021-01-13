@@ -32,12 +32,12 @@ public class BodyPartFactory {
 	}
 	
 	//for default rotation but with preset materials
-	public Body makeBoxBody(float posx, float posy, float width, float height, int material, BodyType bodyType, int ignoreBits, int collideBits) {
+	public Body makeBoxBody(Vector2 pos, float width, float height, int material, BodyType bodyType, int ignoreBits, int collideBits) {
 		//make shape
 		PolygonShape boxShape = new PolygonShape();
 		boxShape.setAsBox(width/2, height/2);
 		//make body
-		Body boxBody = world.createBody(makeBodyDef(bodyType, posx, posy, false));
+		Body boxBody = world.createBody(makeBodyDef(bodyType, pos.x, pos.y, false));
 		//make fixture
 		boxBody.createFixture(FixtureDefFactory.makeFixture(material, boxShape, ignoreBits, collideBits));
 		boxShape.dispose();
@@ -45,12 +45,12 @@ public class BodyPartFactory {
 	}
 	
 	// for custom rotation, custom fixture material properties and custom starting angle
-	public Body makeBoxBody(float posx, float posy, float width, float height, HashMap<String, Float> properties, BodyType bodyType, int ignoreBits, int collideBits, boolean rotation, float angle) {
+	public Body makeBoxBody(Vector2 pos, float width, float height, HashMap<String, Float> properties, BodyType bodyType, int ignoreBits, int collideBits, boolean rotation, float angle) {
 		//make shape
 		PolygonShape boxShape = new PolygonShape();
 		boxShape.setAsBox(width/2, height/2);
 		//make body
-		Body boxBody = world.createBody(makeBodyDef(bodyType, posx, posy, rotation, angle));
+		Body boxBody = world.createBody(makeBodyDef(bodyType, pos.x, pos.y, rotation, angle));
 		// set starting angle
 		//make fixture
 		boxBody.createFixture(FixtureDefFactory.makeFixture(properties, boxShape, ignoreBits, collideBits));
@@ -71,7 +71,6 @@ public class BodyPartFactory {
 		return polyBody;
 	}
 	
-
 	// for custom rotation
 	private BodyDef makeBodyDef(BodyType bodyType, float posx, float posy, boolean rotation) {
 		BodyDef bodyDef = new BodyDef();

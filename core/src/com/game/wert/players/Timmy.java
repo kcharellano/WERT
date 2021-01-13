@@ -41,9 +41,7 @@ public class Timmy extends QwopTypePlayer {
 	private RevoluteJoint leftKneeJoint;
 	private RevoluteJoint rightKneeJoint;
 	
-	// References to the rest of the body parts
-	private ArrayList<Body> parts;
-	
+	// References to the rest of the body parts	
 	private Body head;
 	private Body neck;
 	private Body lowerSpine;
@@ -72,11 +70,15 @@ public class Timmy extends QwopTypePlayer {
 		unit = height/8;
 	}
 	
-	// Player abstract methods -------------------
+	//================================================================================
+    // Player abstact methods
+    //================================================================================
+	
 	@Override
 	public boolean doesExist() {
 		return exists;
 	}
+	
 	@Override
 	public void makePlayer(Vector2 refPoint) {
 		// The center of the torso is the refPoint of the player
@@ -134,8 +136,9 @@ public class Timmy extends QwopTypePlayer {
 		return pelvis.getPosition();
 	}
 	
-	// FourActionMoves Interface ------------------
-	
+	//================================================================================
+    // FourActionMoves Interface
+    //================================================================================
 	@Override
 	public void startActionW() {
 		// move right thigh
@@ -193,7 +196,9 @@ public class Timmy extends QwopTypePlayer {
 		setCalfRotationLock(true);
 	}
 	
-	// FourHingeType Interface --------------------
+	//================================================================================
+    // FourHingeType Interface
+    //================================================================================
 	@Override
 	public float getHingeAngleA() {
 		return rightHipJoint.getJointAngle() * RADTODEGREE;
@@ -253,7 +258,10 @@ public class Timmy extends QwopTypePlayer {
 	public float getMaxAngleD() {
 		return rightKneeJoint.getLowerLimit() * RADTODEGREE;
 	}
-
+	
+	//================================================================================
+    // Internal Methods
+    //================================================================================
 	private void buildTorso(Vector2 refPoint) {
 		Vector2 torsoPos = new Vector2(refPoint.x, refPoint.y);
 		this.torso = makeBoxPart(torsoPos, 0.45f, 1.3f, 0, superLightFlesh, WertId.TORSO);
@@ -374,43 +382,6 @@ public class Timmy extends QwopTypePlayer {
 		bodyPartConnector.connectRevolute(calf, foot, calfAnchor, footAnchor, true, -10f, 15f);
 		return foot;
 	}
-		
-	
-	//TODO: Consider removing these methods and putting their functionality in the factories
-	private Body makeJointPart(Vector2 pos, float radiusMultx, HashMap<String, Float> material) {
-		float radius = unit * radiusMultx;
-		Body body = bodyPartFactory.makeCircleBody(pos.x, pos.y, radius, material, BodyType.DynamicBody, CollisionGroups.PLAYER, CollisionGroups.OTHER, false);
-		body.setUserData(new BodyData(radius));
-		return body;
-	}
-	
-	// bodytype if specified in instance variable
-	
-	private Body makeBoxPart(Vector2 pos, float widthMultx, float heightMultx, float startingAngle, HashMap<String, Float> material, WertId id) {
-		float partWidth = widthMultx*unit;
-		float partHeight = heightMultx*unit;
-		Body body = bodyPartFactory.makeBoxBody(pos.x, pos.y, partWidth, partHeight, material, BodyType.DynamicBody, CollisionGroups.PLAYER, CollisionGroups.OTHER, false, startingAngle);
-		body.setUserData(new BodyData(partWidth, partHeight, id));
-		return body;
-	}
-	
-	private Body makeBoxPart(Vector2 pos, float widthMultx, float heightMultx, float startingAngle, HashMap<String, Float> material, boolean fixed, WertId wid) {
-		float partWidth = widthMultx*unit;
-		float partHeight = heightMultx*unit;
-		Body body = bodyPartFactory.makeBoxBody(pos.x, pos.y, partWidth, partHeight, material, BodyType.DynamicBody, CollisionGroups.PLAYER, CollisionGroups.OTHER, fixed, startingAngle);
-		body.setUserData(new BodyData(partWidth, partHeight, wid));
-		return body;
-	}
-
-	
-	private HashMap<String, Float> makeFleshProperties(float den, float fric, float rest) {
-		HashMap<String, Float>	prop = new HashMap<String, Float>();
-		prop.put("density", den);
-		prop.put("friction", fric);
-		prop.put("restitution", rest);
-		return prop;
-	}
-	
 	
 	private void setThighRotationLock(boolean bool) {
 		rightThigh.setFixedRotation(bool);
@@ -438,6 +409,40 @@ public class Timmy extends QwopTypePlayer {
 		rightFoot = null;
 		leftKnee = null;
 		rightKnee = null;
+	}
+	
+	private HashMap<String, Float> makeFleshProperties(float den, float fric, float rest) {
+		HashMap<String, Float>	prop = new HashMap<String, Float>();
+		prop.put("density", den);
+		prop.put("friction", fric);
+		prop.put("restitution", rest);
+		return prop;
+	}
+	
+	/** TODO: Consider removing these methods and putting their functionality in another class **/
+	
+	private Body makeJointPart(Vector2 pos, float radiusMultx, HashMap<String, Float> material) {
+		float radius = unit * radiusMultx;
+		Body body = bodyPartFactory.makeCircleBody(pos.x, pos.y, radius, material, BodyType.DynamicBody, CollisionGroups.PLAYER, CollisionGroups.OTHER, false);
+		body.setUserData(new BodyData(radius));
+		return body;
+	}
+	
+	// bodytype if specified in instance variable
+	private Body makeBoxPart(Vector2 pos, float widthMultx, float heightMultx, float startingAngle, HashMap<String, Float> material, WertId id) {
+		float partWidth = widthMultx*unit;
+		float partHeight = heightMultx*unit;
+		Body body = bodyPartFactory.makeBoxBody(pos, partWidth, partHeight, material, BodyType.DynamicBody, CollisionGroups.PLAYER, CollisionGroups.OTHER, false, startingAngle);
+		body.setUserData(new BodyData(partWidth, partHeight, id));
+		return body;
+	}
+	
+	private Body makeBoxPart(Vector2 pos, float widthMultx, float heightMultx, float startingAngle, HashMap<String, Float> material, boolean fixed, WertId wid) {
+		float partWidth = widthMultx*unit;
+		float partHeight = heightMultx*unit;
+		Body body = bodyPartFactory.makeBoxBody(pos, partWidth, partHeight, material, BodyType.DynamicBody, CollisionGroups.PLAYER, CollisionGroups.OTHER, fixed, startingAngle);
+		body.setUserData(new BodyData(partWidth, partHeight, wid));
+		return body;
 	}
 	
 }
