@@ -14,9 +14,7 @@ public class WertEnvironment {
 	private WertContactListener contactListener;
 	private QwopTypePlayer player;
 	private QwopTypeState state;
-	private QwopTypeActions actions;
-	private VirtualKeyPresser presser;
-	
+		
 	private int stepCount;
 	private int nHipStates;
 	private int nKneeStates;
@@ -56,14 +54,21 @@ public class WertEnvironment {
 		envStateUpdate(state);
 	}
 	
-	public void step(char action, QwopTypePlayer player) {
+	public StepResults step(char action, QwopTypePlayer player) {
 		QwopTypeState nextState = new QwopTypeState();
-		float reward = 0;
-		Vector2 oldPos = player.playerPosition();
-		int aAngle = state.angleA;
-		int bAngle = state.angleB;
-		int cAngle = state.angleC;
-		int dAngle = state.angleD;
+		float oldPos = player.playerPosition().x;
+		
+		// assume all actions are legal all the time
+		QwopActionHandler.doAction(player, action);
+		envStateUpdate(nextState);
+		float newPos = player.playerPosition().x;
+		
+		// simple reward function
+		float reward = newPos - oldPos;
+		state = nextState;
+		stepCount += 1;
+		// stepCount > horizon?? right now default that to false
+		return new StepResults(nextState, reward, isTerminal() || false);
 	}
 	
 	public void reset() {
@@ -79,7 +84,6 @@ public class WertEnvironment {
 	public boolean isTerminal() {
 		return contactListener.isTerminalContact();
 	}
-	
 	
 	private void discretizeStates(QwopTypePlayer player) {
 		int minHipJointAngle = player.getMinAngleA();

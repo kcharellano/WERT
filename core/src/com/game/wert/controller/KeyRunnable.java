@@ -14,8 +14,8 @@ public class KeyRunnable implements Runnable {
 	
 	@Override
 	public void run() {
-		// note: there is a delay in between keypress and keyrelease
 		robot.keyPress(keyCode);
+		// stop thread of ACTION_DELAY amount of milliseconds
 		robot.delay(ACTION_DELAY);
 		robot.keyRelease(keyCode);
 	}

@@ -10,7 +10,6 @@ public class VirtualKeyPresser {
 		try {
 			this.robot = new Robot();
 		} catch (AWTException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

@@ -3,6 +3,7 @@ package com.game.wert.controller;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.game.wert.players.FourActionMoves;
+import com.game.wert.players.QwopTypePlayer;
 
 public class HumanController implements InputProcessor {
 	
@@ -10,12 +11,12 @@ public class HumanController implements InputProcessor {
 	
 	public boolean w, e, r, t;
 	
-	private FourActionMoves playerActions;
+	private QwopTypePlayer playerActions;
 	
 	public HumanController() {
 	}
 	
-	public void setPlayer(FourActionMoves player) {
+	public void setPlayer(QwopTypePlayer player) {
 		this.playerActions = player;
 	}
 	
@@ -44,6 +45,7 @@ public class HumanController implements InputProcessor {
 	        case Keys.W:
 	        	w = true;
 	        	playerActions.startActionW();
+	        	//playerActions.stopActionW();
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.E:
@@ -67,9 +69,8 @@ public class HumanController implements InputProcessor {
 	// Activated when a key on the keyboard is released
 	@Override
 	public boolean keyUp(int keycode) {
-	boolean keyProcessed = false;
-	switch (keycode) // switch code base on the variable keycode
-        {
+		boolean keyProcessed = false;
+		switch (keycode) {
 	        case Keys.LEFT:	
 	            left = false;
 	            keyProcessed = true;	
@@ -88,25 +89,33 @@ public class HumanController implements InputProcessor {
 	            break;
 	        case Keys.W:
 	        	w = false;
-	        	playerActions.stopActionW();
+	        	if(playerActions.doesExist()) {
+		        	playerActions.stopActionW();
+	        	}
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.E:
 	        	e = false;
-	        	playerActions.stopActionE();
+	        	if(playerActions.doesExist()) {
+		        	playerActions.stopActionE();
+	        	}
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.R:
 	        	r = false;
-	        	playerActions.stopActionR();
+	        	if(playerActions.doesExist()) {
+		        	playerActions.stopActionR();
+	        	}
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.T:
 	        	t = false;
-	        	playerActions.stopActionR();
+	        	if(playerActions.doesExist()) {
+		        	playerActions.stopActionT();
+	        	}
 	        	keyProcessed = true;
-        }
-	return keyProcessed;	//  return our peyProcessed flag
+	        }
+		return keyProcessed;	//  return our peyProcessed flag
 }
 
 	// Activated every time the keyboard sends a character. This can be called many times when a key is held down
