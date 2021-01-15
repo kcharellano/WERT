@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.game.wert.controller.HumanController;
 import com.game.wert.controller.KeyboardController;
 import com.game.wert.controller.VirtualKeyPresser;
+import com.game.wert.learn.Quadruple;
 import com.game.wert.players.Timmy;
 
 
@@ -94,7 +95,7 @@ public class WertModel {
 					player.makePlayer(new Vector2(0,0));
 				}
 			}
-			System.out.println(player.getHingeAngleA()+"|"+player.getHingeAngleD());
+			//System.out.println(player.getHingeAngleA()+"|"+player.getHingeAngleD());
 		}
 		
 		world.step(delta , 6, 2);

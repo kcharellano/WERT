@@ -13,7 +13,7 @@ import com.game.wert.players.Timmy;
 public class WertEnvironment {
 	private WertContactListener contactListener;
 	private QwopTypePlayer player;
-	private QwopTypeState state;
+	private Quadruple state;
 		
 	private int stepCount;
 	private int nHipStates;
@@ -24,20 +24,20 @@ public class WertEnvironment {
 	private ArrayList<Integer> bucketsB;
 	private ArrayList<Integer> bucketsC;
 	private ArrayList<Integer> bucketsD;
-	private char[] actionSpace = {'w', 'e', 'r', 't'};
-	
-	// initial values 
-	private Vector2 startingCoor = new Vector2(-10f, 0);
+	//private char[] actionSpace = {'w', 'e', 'r', 't'};
+	private Vector2 startingCoor = new Vector2(-10f, 0); 
 	
 	public WertEnvironment(World world, WertContactListener cl) {
 		player = new Timmy(world, 8);
 		player.makePlayer(new Vector2(0,0));
 		contactListener = cl;
 		
-		// A state consists of the four hinge angles timmy has
-		// State angles are grouped into buckets instead of actual degree measurements
-		state = new QwopTypeState();
-
+		/**
+		 * A state consists of the four hinge angles (two hip two knee) which are discretized into bucket
+		 * ranges instead of actual degree measurements
+		 */
+		state = new Quadruple();
+		
 		// Hip angle range is -80 to 80. With 80 states every bucket has a range of 2 degrees
 		nHipStates = 80;
 		
@@ -45,22 +45,33 @@ public class WertEnvironment {
 		nKneeStates = 50;
 		
 		// discretize the state space using the values above
-		discretizeStates(player);
+		int minHipJointAngle = player.getMinAngleA();
+		int maxHipJointAngle = player.getMaxAngleA();
+		int minKneeJointAngle = player.getMinAngleC();
+		int maxKneeJointAngle = player.getMaxAngleC();
 		
-		// Observation space??
+		hipIncr = (maxHipJointAngle - minHipJointAngle) / nHipStates - 1;
+		kneeIncr = (maxKneeJointAngle - minKneeJointAngle) / nKneeStates - 1;
 		
-		// set stepCount and state to initial values
+		bucketsA = makeBuckets(minHipJointAngle, hipIncr, nHipStates);
+		bucketsB = makeBuckets(minHipJointAngle, hipIncr, nHipStates);
+		bucketsC = makeBuckets(minKneeJointAngle, kneeIncr, nKneeStates);
+		bucketsD = makeBuckets(minKneeJointAngle, kneeIncr, nKneeStates);
+		
+		//TODO:Observation space
+		
+		// Initialize state and set stepCount to zero
+		stateUpdater(state);
 		stepCount = 0;
-		envStateUpdate(state);
 	}
 	
-	public StepResults step(char action, QwopTypePlayer player) {
-		QwopTypeState nextState = new QwopTypeState();
+	public StepResults step(int action, QwopTypePlayer player) {
+		Quadruple nextState = new Quadruple();
 		float oldPos = player.playerPosition().x;
 		
 		// assume all actions are legal all the time
 		QwopActionHandler.doAction(player, action);
-		envStateUpdate(nextState);
+		stateUpdater(nextState);
 		float newPos = player.playerPosition().x;
 		
 		// simple reward function
@@ -76,7 +87,7 @@ public class WertEnvironment {
 			player.destroyPlayer();
 		}
 		player.makePlayer(startingCoor);
-		envStateUpdate(state);
+		stateUpdater(state);
 		stepCount = 0;
 	}
 	
@@ -85,22 +96,6 @@ public class WertEnvironment {
 		return contactListener.isTerminalContact();
 	}
 	
-	private void discretizeStates(QwopTypePlayer player) {
-		int minHipJointAngle = player.getMinAngleA();
-		int maxHipJointAngle = player.getMaxAngleA();
-
-		int minKneeJointAngle = player.getMinAngleC();
-		int maxKneeJointAngle = player.getMaxAngleC();
-		
-		hipIncr = (maxHipJointAngle - minHipJointAngle) / nHipStates - 1;
-		kneeIncr = (maxKneeJointAngle - minKneeJointAngle) / nKneeStates - 1;
-		
-		bucketsA = makeBuckets(minHipJointAngle, hipIncr, nHipStates);
-		bucketsB = makeBuckets(minHipJointAngle, hipIncr, nHipStates);
-		bucketsC = makeBuckets(minKneeJointAngle, kneeIncr, nKneeStates);
-		bucketsD = makeBuckets(minKneeJointAngle, kneeIncr, nKneeStates);
-
-	}
 	
 	private ArrayList<Integer> makeBuckets(int minAngle, int incr, int nStates){
 		ArrayList<Integer> buckets = new ArrayList<Integer>();
@@ -110,7 +105,17 @@ public class WertEnvironment {
 		return buckets;
 	}
 	
+	private void stateUpdater(Quadruple state) {
+		int stateA = bucketMap(player.getHingeAngleA(), player.getMinAngleA(), hipIncr, bucketsA);
+		int stateB = bucketMap(player.getHingeAngleB(), player.getMinAngleB(), hipIncr, bucketsB);
+		int stateC = bucketMap(player.getHingeAngleC(), player.getMinAngleC(), kneeIncr, bucketsC);
+		int stateD = bucketMap(player.getHingeAngleD(), player.getMinAngleD(), kneeIncr, bucketsD);
+		state.update(stateA, stateB, stateC, stateD);
+	}
+	
+	// map an angle to a bucket index
 	private int bucketMap(int angle, int minAngle, int incr, ArrayList<Integer> buckets){
+		//TODO: can this ever result in a negative index
 		int index = (angle - minAngle) / incr;
 		if(index < 0) {
 			return 0;
@@ -121,13 +126,5 @@ public class WertEnvironment {
 		else {
 			return index;
 		}
-	}
-	
-	private void envStateUpdate(QwopTypeState state) {
-		int stateA = bucketMap(player.getHingeAngleA(), player.getMinAngleA(), hipIncr, bucketsA);
-		int stateB = bucketMap(player.getHingeAngleB(), player.getMinAngleB(), hipIncr, bucketsB);
-		int stateC = bucketMap(player.getHingeAngleC(), player.getMinAngleC(), kneeIncr, bucketsC);
-		int stateD = bucketMap(player.getHingeAngleD(), player.getMinAngleD(), kneeIncr, bucketsD);
-		state.update(stateA, stateB, stateC, stateD);
 	}
 }

@@ -3,12 +3,12 @@ package com.game.wert.learn;
 import com.game.wert.players.FourActionMoves;
 
 public class ActionRunnable implements Runnable {
-	private char action;
+	private int action;
 	private FourActionMoves moves;
 	private float timeDelay = (5f / 60.f);
 	private float timeStep = (1f / 60.f);
 	
-	public ActionRunnable(FourActionMoves moves, char action) {
+	public ActionRunnable(FourActionMoves moves, int action) {
 		this.action = action;
 		this.moves = moves;
 	}
@@ -17,28 +17,28 @@ public class ActionRunnable implements Runnable {
 	public void run() {
 		float counter = 0;
 		switch(action) {
-		case 'w':
+		case 0:
 			while(counter < timeDelay) {
 				moves.startActionW();
 				counter += timeStep;
 			}
 			moves.stopActionW();
 			break;
-		case 'e':
+		case 1:
 			while(counter < timeDelay) {
 				moves.startActionE();
 				counter += timeStep;
 			}
 			moves.stopActionE();
 			break;
-		case 'r':
+		case 2:
 			while(counter < timeDelay) {
 				moves.startActionR();
 				counter += timeStep;
 			}
 			moves.stopActionR();
 			break;
-		case 't':
+		case 3:
 			while(counter < timeDelay) {
 				moves.startActionT();
 				counter += timeStep;
