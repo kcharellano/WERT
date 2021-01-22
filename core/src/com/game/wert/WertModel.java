@@ -20,33 +20,22 @@ public class WertModel {
 	public World world;
 	
 	private BodyPartFactory bpf;
-	//private KeyboardController controller;
-	//private HumanController hcontroller;
 	private WertContactListener wertContactListener;
-	//private VirtualKeyPresser presser;
-	//private float stepInterval = (10.f / 60.f);
-	//private float stepTimer = 0f;
 	private WertEnvironment env;
 	private QLearningAgent agent;
 	private float startDelay = 0;
 	private int i = 0;
+	private int episodes = 0;
 	private float totalReward = 0;
 	
 	public WertModel (){
-		//controller = new KeyboardController();
-		//hcontroller = new HumanController();
 		world = new World(new Vector2(0, -9.8f), true);
 		wertContactListener = new WertContactListener();
 		world.setContactListener(wertContactListener);
 		bpf = new BodyPartFactory(world);
-		//presser = new VirtualKeyPresser();
 		// create floor
 		Body floor = bpf.makeBoxBody(new Vector2(0f, -15f), 50, 10, FixtureDefFactory.FLOOR, BodyType.StaticBody, CollisionGroups.OTHER, CollisionGroups.PLAYER);
 		floor.setUserData(new BodyData(50, 10, WertId.FLOOR));
-		//player = new Timmy(world, h);
-		//player.makePlayer(new Vector2(0,0));
-		//hcontroller.setPlayer(player);
-		//Gdx.input.setInputProcessor(hcontroller);
 		env = new WertEnvironment(world, wertContactListener);
 		agent = new QLearningAgent(env);
 	}
@@ -57,13 +46,31 @@ public class WertModel {
 			startDelay += delta;
 			world.step(delta, 6, 2);
 		}
-		else if(i < 5000) {
+		else if(i < 4000) {
 			i += 1;
+			System.out.println("EPISODE:"+episodes+ " -- "+i);
 			Quadruple oldState = env.state;
 			int action = agent.chooseAction(oldState);
 			StepResults res = env.step(action, delta);
+			//System.out.println(env.player.playerPosition().x);
+			if(res.terminal || env.player.playerPosition().x < -22f) {
+				res.reward += -100f;
+				i = 4000;
+			}
 			agent.learn(oldState, action, res.reward, res.state);
 			totalReward += res.reward;
+		}
+		else if(episodes < 100){
+			episodes += 1;
+			i = 0;
+			startDelay = 0;
+			env.reset();
+		}
+		else {
+			System.out.println("FULLY TRAINED");
+			int action = agent.chooseGreedyAction(env.state);
+			env.step(action, delta);
+			world.step(delta , 6, 2);
 		}
 		//world.step(delta , 6, 2);
 	}

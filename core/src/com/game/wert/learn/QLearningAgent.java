@@ -14,10 +14,10 @@ public class QLearningAgent {
 	
 	public QLearningAgent(WertEnvironment env) {
 		this.env = env;
-		this.discountFactor = 0.9f;
+		this.discountFactor = 0.5f;
 		this.qVals = new DefaultMap<Quadruple, float[]>();
 		this.learningRate = 0.2f;
-		this.eps = 0.5f;
+		this.eps = 0.3f;
 		this.rand = new Random();
 	}
 	
@@ -32,6 +32,11 @@ public class QLearningAgent {
 			action = argmax(qVals.get(state));
 		}
 		return action;
+	}
+	
+	public int chooseGreedyAction(Quadruple state) {
+		// greedily select best action given the state
+		return argmax(qVals.get(state));
 	}
 	
 	public void learn(Quadruple curState, int action, float reward, Quadruple nextState) {

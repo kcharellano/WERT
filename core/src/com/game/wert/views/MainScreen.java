@@ -6,12 +6,14 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.game.wert.WertGame;
+import com.game.wert.WertHuman;
 import com.game.wert.WertModel;
 import com.game.wert.controller.KeyboardController;
 
 public class MainScreen implements Screen {
 	private WertGame parent;
 	private WertModel model;
+	//private WertHuman model;
 	private OrthographicCamera cam;
 	private Box2DDebugRenderer debugRenderer;
 	private KeyboardController controller;
@@ -20,8 +22,8 @@ public class MainScreen implements Screen {
 	public MainScreen(WertGame wertGame) {
 		parent = wertGame;
 		cam = new OrthographicCamera(42, 34);
-		//controller = new KeyboardController();
 		model = new WertModel();
+		//model = new WertHuman();
 		debugRenderer = new Box2DDebugRenderer(true, true, false, true, true, true);
 	}
 

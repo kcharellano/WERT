@@ -36,7 +36,7 @@ public class FixtureDefFactory {
 			break;
 		case FLOOR:
 			fixtureDef.density = 1f;
-			fixtureDef.friction = 0.9f;
+			fixtureDef.friction = 0.5f;
 			fixtureDef.restitution = 0f;
 		}
 		return fixtureDef;

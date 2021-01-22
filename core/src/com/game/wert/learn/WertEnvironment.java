@@ -62,11 +62,9 @@ public class WertEnvironment {
 		float oldPos = player.playerPosition().x;
 		
 		// assume all actions are legal all the time
-		QwopActionHandler.doAction(player, action);
-		player.inAction = true;
-		while(player.inAction) {
-			world.step(delta, 6, 2);
-		}
+		//QwopActionHandler.doAction(player, action, delta, world);
+		performAction(action, delta, delta*5);
+		
 		// fill in nextState after performing action
 		stateUpdater(nextState);
 		float newPos = player.playerPosition().x;
@@ -92,6 +90,44 @@ public class WertEnvironment {
 	// Returns true if head, torso, or pelvis are in contact with the floor
 	public boolean isTerminal() {
 		return contactListener.isTerminalContact();
+	}
+	
+	private void performAction(int action, float delta, float timeDelay) {
+		float stepCounter = 0;
+		switch(action) {
+		case 0:
+			while(stepCounter < timeDelay) {
+				player.startActionW();
+				stepCounter += delta;
+				world.step(delta, 6, 2);
+			}
+			player.stopActionW();
+			break;
+		case 1:
+			while(stepCounter < timeDelay) {
+				player.startActionE();
+				stepCounter += delta;
+				world.step(delta, 6, 2);
+			}
+			player.stopActionE();
+			break;
+		case 2:
+			while(stepCounter < timeDelay) {
+				player.startActionR();
+				stepCounter += delta;
+				world.step(delta, 6, 2);
+			}
+			player.stopActionR();
+			break;
+		case 3:
+			while(stepCounter < timeDelay) {
+				player.startActionT();
+				stepCounter += delta;
+				world.step(delta, 6, 2);
+			}
+			player.stopActionT();
+			break;
+		}
 	}
 	
 	private void stateUpdater(Quadruple state) {

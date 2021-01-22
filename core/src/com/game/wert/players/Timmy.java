@@ -21,11 +21,13 @@ public class Timmy extends QwopTypePlayer {
 	private BodyPartConnector bodyPartConnector;
 	
 	// fixture properties for body part creation
-	private HashMap<String, Float> lightFlesh = makeFleshProperties(0.05f, 0.01f, 0f);
+	private HashMap<String, Float> lightFlesh = makeFleshProperties(0.01f, 0.01f, 0f);
+	private HashMap<String, Float> thighProp = makeFleshProperties(0.1f, 0.1f, 0.01f);
+	private HashMap<String, Float> calfProp = makeFleshProperties(0.05f, 0.1f, 0.01f);
 	private HashMap<String, Float> medFlesh = makeFleshProperties(0.2f, 0.2f, 0f);
 	private HashMap<String, Float> heavyFlesh = makeFleshProperties(0.5f, 0.2f, 0f);
 	private HashMap<String, Float> superLightFlesh = makeFleshProperties(0.01f, 0.2f, 0f);
-	private HashMap<String, Float> shoeMaterial = makeFleshProperties(0.1f, 0.9f, 0f);
+	private HashMap<String, Float> shoeMaterial = makeFleshProperties(0.6f, 0.8f, 0f);
 	
 	// References to important body parts
 	private Body rightThigh;
@@ -54,10 +56,21 @@ public class Timmy extends QwopTypePlayer {
 	// position variable
 	
 	// Movement force modifiers
-	private float thighForce = 0.0004f;
-	private float thighModifier = 0.9f;
-	private float calfForce = 0.0003f;
-	private float calfModifier = 0.8f;
+	//private float thighForce = 0.4f;
+	//private float thighModifier = 0.3f;
+	//private float calfForce = 0.3f;
+	//private float calfModifier = 0.2f;
+	
+	private float thighForce = 0.1649f * 0.5f;
+	private float thighModifier = 70f;
+	private float calfForce = 0.5f * thighForce;
+	private float calfModifier = 70f;
+	
+	//human modifiers
+	//private float thighForce = 0.1649f;
+	//private float thighModifier = 50f;
+	//private float calfForce = 0.5f * thighForce;
+	//private float calfModifier = 50f;
 
 	// Unit used to build timmy
 	private float unit;
@@ -87,26 +100,26 @@ public class Timmy extends QwopTypePlayer {
 		// The center of the torso is the refPoint of the player
 		
 		// create pelvis, torso and head
-		buildTorso(refPoint);
-		attachHead(refPoint, torso);
-		attachPelvis(refPoint, torso);
+		//buildTorso(refPoint);
+		//attachHead(refPoint, torso);
+		attachPelvis(refPoint);
 		Object[] holder;
 		
 		// Create right leg
-		holder = attachThigh(pelvis.getWorldCenter(), pelvis, -1, -20f);
+		holder = attachThigh(pelvis.getWorldCenter(), pelvis, -1, -40f);
 		rightHipJoint = (RevoluteJoint) holder[0];
 		rightThigh = (Body) holder[1];
-		holder = attachCalf(rightThigh.getWorldCenter(), rightThigh, -1, -25f);
+		holder = attachCalf(rightThigh.getWorldCenter(), rightThigh, -1, -30f);
 		rightKneeJoint = (RevoluteJoint) holder[0];
 		rightCalf = (Body) holder[1];
 		rightKnee = (Body) holder[2];
 		rightFoot = attachFoot(rightCalf.getWorldCenter(), rightCalf);
 		
 		// Create left leg
-		holder = attachThigh(pelvis.getWorldCenter(), pelvis, 1, 20f);
+		holder = attachThigh(pelvis.getWorldCenter(), pelvis, 1, 40f);
 		leftHipJoint = (RevoluteJoint) holder[0];
 		leftThigh = (Body) holder[1];
-		holder = attachCalf(leftThigh.getWorldCenter(), leftThigh, 1, -10f);
+		holder = attachCalf(leftThigh.getWorldCenter(), leftThigh, 1, -30f);
 		leftKneeJoint = (RevoluteJoint) holder[0];
 		leftCalf = (Body) holder[1];
 		leftKnee = (Body) holder[2];
@@ -117,9 +130,10 @@ public class Timmy extends QwopTypePlayer {
 	
 	@Override
 	public void destroyPlayer() {
-		world.destroyBody(head);
-		world.destroyBody(neck);
-		world.destroyBody(lowerSpine);
+		//world.destroyBody(head);
+		//world.destroyBody(neck);
+		//world.destroyBody(lowerSpine);
+		//world.destroyBody(torso);
 		world.destroyBody(leftFoot);
 		world.destroyBody(rightFoot);
 		world.destroyBody(leftKnee);
@@ -128,7 +142,6 @@ public class Timmy extends QwopTypePlayer {
 		world.destroyBody(rightCalf);
 		world.destroyBody(leftThigh);
 		world.destroyBody(leftCalf);
-		world.destroyBody(torso);
 		world.destroyBody(pelvis);
 		nullifyBodyRefs();
 		exists = false;
@@ -148,10 +161,11 @@ public class Timmy extends QwopTypePlayer {
 		// turn right thigh clockwise and left thigh counter clockwise
 		setThighRotationLock(false);
 		//setCalfRotationLock(false);
-		//rightThigh.setTransform(rightThigh.getPosition(), (rightThigh.getAngle() + (1.0f * DEGREETORAD)) % (360 * DEGREETORAD));
 		rightThigh.applyAngularImpulse(thighForce, false);
-		leftThigh.applyAngularImpulse(thighModifier*-thighForce, true);
-		//rightCalf.applyAngularImpulse(calfForce * calfModifier, true);
+		leftThigh.applyTorque(-thighForce*thighModifier, true);
+		//rightThigh.applyTorque(thighForce, false);
+		//leftThigh.applyTorque(thighModifier*-thighForce, true);
+		
 	}
 
 	@Override
@@ -161,7 +175,7 @@ public class Timmy extends QwopTypePlayer {
 		setThighRotationLock(false);
 		//setCalfRotationLock(false);
 		leftThigh.applyAngularImpulse(thighForce, true);
-		rightThigh.applyAngularImpulse(thighModifier*-thighForce, true);
+		rightThigh.applyTorque(-thighForce*thighModifier, true);
 	}
 
 	@Override
@@ -169,8 +183,8 @@ public class Timmy extends QwopTypePlayer {
 		// move left calf
 		// turn left calf counter clockwise and right calf clockwise
 		setCalfRotationLock(false);
-		leftCalf.applyAngularImpulse(calfModifier*-calfForce,  true);
-		rightCalf.applyAngularImpulse(calfForce, true);
+		leftCalf.applyAngularImpulse(-calfForce,  true);
+		rightCalf.applyTorque(calfForce * calfModifier, true);
 		
 	}
 
@@ -179,8 +193,10 @@ public class Timmy extends QwopTypePlayer {
 		// move right calf
 		// turn right calf counter clockwise and left calf clockwise
 		setCalfRotationLock(false);
-		rightCalf.applyAngularImpulse(calfModifier*-calfForce,  true);
-		leftCalf.applyAngularImpulse(calfForce, true);
+		rightCalf.applyAngularImpulse(-calfForce,  true);
+		leftCalf.applyTorque(calfForce * calfModifier, true);
+		//rightCalf.applyTorque(calfModifier*-calfForce,  true);
+		//leftCalf.applyTorque(calfForce, true);
 	}
 
 	@Override
@@ -309,32 +325,34 @@ public class Timmy extends QwopTypePlayer {
 		bodyPartConnector.connectWeld(neck, torso, neckAnchorBottom, torsoAnchor);
 	}
 	
-	private Body attachPelvis(Vector2 refPoint, Body torso) {
-		BodyData torsoData = (BodyData) torso.getUserData();
+	private Body attachPelvis(Vector2 refPoint) {
+		//BodyData torsoData = (BodyData) torso.getUserData();
 
 		// create lower spine
-		Vector2 lowerSpinePos = new Vector2(refPoint.x, refPoint.y + -(torsoData.halfHeight));
+		//Vector2 lowerSpinePos = new Vector2(refPoint.x, refPoint.y + -(torsoData.halfHeight));
 		//this.lowerSpine = makeBoxPart(lowerSpinePos, 0.1f, 0.4f, 0, heavyFlesh, WertId.PELVIS);
-		this.lowerSpine = makeBoxPart(lowerSpinePos, 0.1f, 0.4f, 0, medFlesh, WertId.PELVIS);
-		BodyData lowerSpineData = (BodyData) lowerSpine.getUserData();
+		//this.lowerSpine = makeBoxPart(lowerSpinePos, 0.1f, 0.4f, 0, medFlesh, WertId.PELVIS);
+		//BodyData lowerSpineData = (BodyData) lowerSpine.getUserData();
 		
 		// connect lower spine and torso
-		float lengthRatio = 0.95f;
-		Vector2 torsoAnchorBottom = new Vector2(0, lengthRatio*-(torsoData.halfHeight));
-		Vector2 lowerSpineAnchorTop = new Vector2(0, lengthRatio*lowerSpineData.halfHeight);
-		bodyPartConnector.connectWeld(torso, lowerSpine, torsoAnchorBottom, lowerSpineAnchorTop);
+		//float lengthRatio = 0.95f;
+		//Vector2 torsoAnchorBottom = new Vector2(0, lengthRatio*-(torsoData.halfHeight));
+		//Vector2 lowerSpineAnchorTop = new Vector2(0, lengthRatio*lowerSpineData.halfHeight);
+		//bodyPartConnector.connectWeld(torso, lowerSpine, torsoAnchorBottom, lowerSpineAnchorTop);
 		
 		// create pelvis
-		Vector2 pelvisPos = new Vector2(refPoint.x, refPoint.y + -(torsoData.height));
+		//Vector2 pelvisPos = new Vector2(refPoint.x, refPoint.y + -(torsoData.height));
+		Vector2 pelvisPos = new Vector2(refPoint.x, refPoint.y);
+
 		// lock pelvis rotation
-		this.pelvis = makeBoxPart(pelvisPos, 0.6f, 1, 0, lightFlesh, true, WertId.PELVIS);
+		this.pelvis = makeBoxPart(pelvisPos, 1, 0.8f, 0, lightFlesh, true, WertId.PELVIS);
 		//this.pelvis = makeBoxPart(pelvisPos, 0.6f, 1, 0, heavyFlesh, true, WertId.PELVIS);
 		BodyData pelvisData = (BodyData) pelvis.getUserData();
 		
 		// connect lowerspine and pelvis
-		Vector2 lowerSpineAnchorBottom = new Vector2(0, lengthRatio*-(lowerSpineData.halfHeight));
-		Vector2 pelvisAnchorTop = new Vector2(0, lengthRatio*pelvisData.halfHeight);
-		bodyPartConnector.connectWeld(lowerSpine, pelvis, lowerSpineAnchorBottom, pelvisAnchorTop);
+		//Vector2 lowerSpineAnchorBottom = new Vector2(0, lengthRatio*-(lowerSpineData.halfHeight));
+		//Vector2 pelvisAnchorTop = new Vector2(0, lengthRatio*pelvisData.halfHeight);
+		//bodyPartConnector.connectWeld(lowerSpine, pelvis, lowerSpineAnchorBottom, pelvisAnchorTop);
 		
 		return pelvis;
 	}
@@ -346,13 +364,14 @@ public class Timmy extends QwopTypePlayer {
 		float lengthRatio = 0.95f;
 		
 		// create thigh
-		Vector2 thighPos = new Vector2(refPoint.x + (direction*thighPosOffset), refPoint.y + -(pelvisData.halfHeight + unit));
-		Body thigh = makeBoxPart(thighPos, 0.1f, 2f, thighAngle, lightFlesh, true, WertId.BENIGN);
+		Vector2 thighPos = new Vector2((direction*pelvisData.width)+refPoint.x + (direction*thighPosOffset), refPoint.y + -(pelvisData.halfHeight + unit));
+		Body thigh = makeBoxPart(thighPos, 0.1f, 2f, thighAngle, thighProp, true, WertId.BENIGN);
 		BodyData thighData = (BodyData) thigh.getUserData();
 
 		// connect thigh to pelvis joint
 		Vector2 thighAnchorTop = new Vector2(0, lengthRatio*(thighData.halfHeight));
-		Vector2 pelvisAnchor = new Vector2((direction*0)*pelvisData.halfWidth, lengthRatio*-(pelvisData.halfHeight));
+		//Vector2 pelvisAnchor = new Vector2((direction*0)*pelvisData.halfWidth, lengthRatio*-(pelvisData.halfHeight));
+		Vector2 pelvisAnchor = new Vector2(0, 0);
 		RevoluteJoint hipJoint = bodyPartConnector.connectRevolute(pelvis, thigh, pelvisAnchor, thighAnchorTop, true, -65, 65);
 		
 		Object[] arr = {hipJoint, thigh};
@@ -374,7 +393,7 @@ public class Timmy extends QwopTypePlayer {
 		
 		// create calf
 		Vector2 calfPos = new Vector2(refPoint.x + (direction*calfPosOffset), refPoint.y + -thighData.height);
-		Body calf = makeBoxPart(calfPos, 0.1f, 1.8f, calfCangle, lightFlesh, true, WertId.BENIGN);
+		Body calf = makeBoxPart(calfPos, 0.1f, 1.8f, calfCangle, calfProp, true, WertId.BENIGN);
 		BodyData calfData = (BodyData) calf.getUserData();
 		
 		// connect calf to thigh
@@ -405,13 +424,13 @@ public class Timmy extends QwopTypePlayer {
 	private void setThighRotationLock(boolean bool) {
 		rightThigh.setFixedRotation(bool);
     	leftThigh.setFixedRotation(bool);
-    	pelvis.setFixedRotation(bool);
+    	//pelvis.setFixedRotation(bool);
 	}
 	
 	private void setCalfRotationLock(boolean bool) {
 		leftCalf.setFixedRotation(bool);
     	rightCalf.setFixedRotation(bool);
-    	pelvis.setFixedRotation(bool);
+    	//pelvis.setFixedRotation(bool);
 	}
 	
 	private void nullifyBodyRefs() {
