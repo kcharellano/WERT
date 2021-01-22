@@ -51,4 +51,9 @@ public class Quadruple {
 			return false;
 		return true;
 	}
+	
+	@Override
+	public String toString() {
+		return "A= "+angleA+" | "+ "B= "+angleB+" | "+"C= "+angleC+" | " + "D= "+angleD;
+	}
 }

@@ -15,37 +15,36 @@ public class ActionRunnable implements Runnable {
 	
 	@Override
 	public void run() {
-		float counter = 0;
+		float stepCounter = 0;
 		switch(action) {
 		case 0:
-			while(counter < timeDelay) {
+			while(stepCounter < timeDelay) {
 				moves.startActionW();
-				counter += timeStep;
+				stepCounter += timeStep;
 			}
 			moves.stopActionW();
 			break;
 		case 1:
-			while(counter < timeDelay) {
+			while(stepCounter < timeDelay) {
 				moves.startActionE();
-				counter += timeStep;
+				stepCounter += timeStep;
 			}
 			moves.stopActionE();
 			break;
 		case 2:
-			while(counter < timeDelay) {
+			while(stepCounter < timeDelay) {
 				moves.startActionR();
-				counter += timeStep;
+				stepCounter += timeStep;
 			}
 			moves.stopActionR();
 			break;
 		case 3:
-			while(counter < timeDelay) {
+			while(stepCounter < timeDelay) {
 				moves.startActionT();
-				counter += timeStep;
+				stepCounter += timeStep;
 			}
 			moves.stopActionT();
 			break;
 		}
 	}
-
 }

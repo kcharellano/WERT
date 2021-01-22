@@ -54,9 +54,9 @@ public class Timmy extends QwopTypePlayer {
 	// position variable
 	
 	// Movement force modifiers
-	private float thighForce = 0.04f;
+	private float thighForce = 0.0004f;
 	private float thighModifier = 0.9f;
-	private float calfForce = 0.03f;
+	private float calfForce = 0.0003f;
 	private float calfModifier = 0.8f;
 
 	// Unit used to build timmy
@@ -65,7 +65,7 @@ public class Timmy extends QwopTypePlayer {
 	private float RADTODEGREE = 180f / (float)Math.PI;
 	private float DEGREETORAD = (float) Math.PI / 180f;
 	private boolean exists = false;
-	
+		
 	public Timmy(World world, float height) {
 		this.world = world;
 		bodyPartFactory = new BodyPartFactory(world);
@@ -185,23 +185,27 @@ public class Timmy extends QwopTypePlayer {
 
 	@Override
 	public void stopActionW() {
+		inAction = false;
 		setThighRotationLock(true);
 		//setCalfRotationLock(true);
 	}
 
 	@Override
 	public void stopActionE() {
+		inAction = false;
 		setThighRotationLock(true);
 		//setCalfRotationLock(true);
 	}
 
 	@Override
 	public void stopActionR() {
+		inAction = false;
 		setCalfRotationLock(true);
 	}
 
 	@Override
 	public void stopActionT() {
+		inAction = false;
 		setCalfRotationLock(true);
 	}
 	
@@ -448,7 +452,7 @@ public class Timmy extends QwopTypePlayer {
 	private Body makeBoxPart(Vector2 pos, float widthMultx, float heightMultx, float startingAngle, HashMap<String, Float> material, WertId id) {
 		float partWidth = widthMultx*unit;
 		float partHeight = heightMultx*unit;
-		Body body = bodyPartFactory.makeBoxBody(pos, partWidth, partHeight, material, BodyType.StaticBody, CollisionGroups.PLAYER, CollisionGroups.OTHER, false, startingAngle);
+		Body body = bodyPartFactory.makeBoxBody(pos, partWidth, partHeight, material, BodyType.DynamicBody, CollisionGroups.PLAYER, CollisionGroups.OTHER, false, startingAngle);
 		body.setUserData(new BodyData(partWidth, partHeight, id));
 		return body;
 	}

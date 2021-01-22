@@ -2,7 +2,7 @@ package com.game.wert.players;
 
 public interface FourActionMoves {
 	// Players that implement this interface only have 4 moves
-	
+
 	// Perform action mapped to W key
 	public void startActionW();
 	

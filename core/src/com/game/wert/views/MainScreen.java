@@ -19,7 +19,7 @@ public class MainScreen implements Screen {
 	// constructor
 	public MainScreen(WertGame wertGame) {
 		parent = wertGame;
-		cam = new OrthographicCamera(32, 24);
+		cam = new OrthographicCamera(42, 34);
 		//controller = new KeyboardController();
 		model = new WertModel();
 		debugRenderer = new Box2DDebugRenderer(true, true, false, true, true, true);

@@ -1,6 +1,6 @@
 package com.game.wert.learn;
 
-class StepResults {
+public class StepResults {
 	public Quadruple state;
 	public float reward;
 	public boolean finished;
@@ -9,5 +9,10 @@ class StepResults {
 		this.state = state;
 		this.reward = reward;
 		this.finished = finished;
+	}
+	
+	@Override
+	public String toString() {
+		return "state = ("+state.toString()+"), reward = " + reward; 
 	}
 }
