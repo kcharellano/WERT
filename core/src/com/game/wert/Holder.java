@@ -100,4 +100,78 @@ public class Holder {
 			world.step(delta , 6, 2);
 		}
 		*/
+		//================================================================================
+	    // FourActionMoves Interface
+	    //================================================================================
+		@Override
+		public void startActionW() {
+			// move right thigh
+			// turn right thigh clockwise and left thigh counter clockwise
+			setThighRotationLock(false);
+			//setCalfRotationLock(false);
+			pelvis.applyForceToCenter(thighForce, 0, true);
+			rightThigh.applyAngularImpulse(thighForce, false);
+			leftThigh.applyTorque(-thighForce*thighModifier, true);
+			//rightThigh.applyTorque(thighForce, false);
+			//leftThigh.applyTorque(thighModifier*-thighForce, true);
+			
+		}
+
+		@Override
+		public void startActionE() {
+			// move left thigh
+			// turn left thigh clockwise and right thigh counter clockwise
+			setThighRotationLock(false);
+			//setCalfRotationLock(false);
+			pelvis.applyForceToCenter(-thighForce, 0, true);
+			leftThigh.applyAngularImpulse(thighForce, true);
+			rightThigh.applyTorque(-thighForce*thighModifier, true);
+		}
+
+		@Override
+		public void startActionR() {
+			// move left calf
+			// turn left calf counter clockwise and right calf clockwise
+			setCalfRotationLock(false);
+			leftCalf.applyAngularImpulse(-calfForce,  true);
+			rightCalf.applyTorque(calfForce * calfModifier, true);
+			
+		}
+
+		@Override
+		public void startActionT() {
+			// move right calf
+			// turn right calf counter clockwise and left calf clockwise
+			setCalfRotationLock(false);
+			rightCalf.applyAngularImpulse(-calfForce,  true);
+			leftCalf.applyTorque(calfForce * calfModifier, true);
+			//rightCalf.applyTorque(calfModifier*-calfForce,  true);
+			//leftCalf.applyTorque(calfForce, true);
+		}
+
+		@Override
+		public void stopActionW() {
+			inAction = false;
+			setThighRotationLock(true);
+			//setCalfRotationLock(true);
+		}
+
+		@Override
+		public void stopActionE() {
+			inAction = false;
+			setThighRotationLock(true);
+			//setCalfRotationLock(true);
+		}
+
+		@Override
+		public void stopActionR() {
+			inAction = false;
+			setCalfRotationLock(true);
+		}
+
+		@Override
+		public void stopActionT() {
+			inAction = false;
+			setCalfRotationLock(true);
+		}
 }

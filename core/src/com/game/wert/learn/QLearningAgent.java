@@ -7,14 +7,14 @@ import java.lang.Math;
 public class QLearningAgent {
 	float discountFactor; // gamma
 	WertEnvironment env;
-	HashMap<Quadruple, float[]> qVals;
+	public HashMap<Quadruple, float[]> qVals;
 	float learningRate; // alpha
 	float eps; //probability of taking a random action
 	Random rand;
 	
 	public QLearningAgent(WertEnvironment env) {
 		this.env = env;
-		this.discountFactor = 0.5f;
+		this.discountFactor = 0.9f;
 		this.qVals = new DefaultMap<Quadruple, float[]>();
 		this.learningRate = 0.2f;
 		this.eps = 0.3f;

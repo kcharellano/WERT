@@ -34,6 +34,7 @@ public class WertHuman{
 	}
 	
 	public void logicStep(float delta) {
+		/*
 		if(kbcontroller.w) {
 			player.startActionW();
 		}
@@ -46,12 +47,14 @@ public class WertHuman{
 		else if(kbcontroller.t) {
 			player.startActionT();
 		}
+		
 		if(wertContactListener.isTerminalContact()) {
 			if(player.doesExist()) {
 				player.destroyPlayer();
 				player.makePlayer(startPos);
 			}
 		}
+		*/
 		world.step(delta, 6, 2);
 	}
 }

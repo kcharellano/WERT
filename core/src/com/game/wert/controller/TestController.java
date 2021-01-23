@@ -2,21 +2,25 @@ package com.game.wert.controller;
 
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.World;
+import com.game.wert.learn.WertEnvironment;
 import com.game.wert.players.FourActionMoves;
-import com.game.wert.players.QwopTypePlayer;
 
-public class HumanController implements InputProcessor {
-	
+public class TestController implements InputProcessor {	
 	public boolean left, right, up, down;
-	
 	public boolean w, e, r, t;
 	
-	private QwopTypePlayer playerActions;
+	private FourActionMoves playerActions;
+	private WertEnvironment env;
+	private World world;
 	
-	public HumanController() {
+	public TestController(WertEnvironment env, World world) {
+		this.env = env;
+		this.world = world;
 	}
 	
-	public void setPlayer(QwopTypePlayer player) {
+	public void setPlayer(FourActionMoves player) {
 		this.playerActions = player;
 	}
 	
@@ -44,23 +48,24 @@ public class HumanController implements InputProcessor {
 	            break;
 	        case Keys.W:
 	        	w = true;
-	        	playerActions.startActionW();
-	        	//playerActions.stopActionW();
+	        	env.reset();
+	        	float startDelay = 0;
+	        	while (startDelay < 1) {
+	    			startDelay += (1/60f);
+	    			world.step(1/60f, 6, 2);
+	    		}
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.E:
 	        	e = true;
-	        	playerActions.startActionE();
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.R:
 	        	r = true;
-	        	playerActions.startActionR();
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.T:
 	        	t = true;
-	        	playerActions.startActionT();
 	        	keyProcessed = true;
         }
 	return keyProcessed;	//  return our peyProcessed flag
@@ -69,8 +74,9 @@ public class HumanController implements InputProcessor {
 	// Activated when a key on the keyboard is released
 	@Override
 	public boolean keyUp(int keycode) {
-		boolean keyProcessed = false;
-		switch (keycode) {
+	boolean keyProcessed = false;
+	switch (keycode) // switch code base on the variable keycode
+        {
 	        case Keys.LEFT:	
 	            left = false;
 	            keyProcessed = true;	
@@ -89,33 +95,21 @@ public class HumanController implements InputProcessor {
 	            break;
 	        case Keys.W:
 	        	w = false;
-	        	if(playerActions.doesExist()) {
-		        	playerActions.stopActionW();
-	        	}
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.E:
 	        	e = false;
-	        	if(playerActions.doesExist()) {
-		        	playerActions.stopActionE();
-	        	}
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.R:
 	        	r = false;
-	        	if(playerActions.doesExist()) {
-		        	playerActions.stopActionR();
-	        	}
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.T:
 	        	t = false;
-	        	if(playerActions.doesExist()) {
-		        	playerActions.stopActionT();
-	        	}
 	        	keyProcessed = true;
-	        }
-		return keyProcessed;	//  return our peyProcessed flag
+        }
+	return keyProcessed;	//  return our peyProcessed flag
 }
 
 	// Activated every time the keyboard sends a character. This can be called many times when a key is held down

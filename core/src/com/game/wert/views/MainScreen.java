@@ -22,9 +22,9 @@ public class MainScreen implements Screen {
 	public MainScreen(WertGame wertGame) {
 		parent = wertGame;
 		cam = new OrthographicCamera(42, 34);
-		model = new WertModel();
 		//model = new WertHuman();
 		debugRenderer = new Box2DDebugRenderer(true, true, false, true, true, true);
+		model = new WertModel(this);
 	}
 
 	@Override

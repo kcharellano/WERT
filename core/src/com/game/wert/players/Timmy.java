@@ -22,12 +22,12 @@ public class Timmy extends QwopTypePlayer {
 	
 	// fixture properties for body part creation
 	private HashMap<String, Float> lightFlesh = makeFleshProperties(0.01f, 0.01f, 0f);
-	private HashMap<String, Float> thighProp = makeFleshProperties(0.1f, 0.1f, 0.01f);
-	private HashMap<String, Float> calfProp = makeFleshProperties(0.05f, 0.1f, 0.01f);
+	private HashMap<String, Float> thighProp = makeFleshProperties(0.1f, 0.5f, 0.01f);
+	private HashMap<String, Float> calfProp = makeFleshProperties(0.05f, 0.5f, 0.01f);
 	private HashMap<String, Float> medFlesh = makeFleshProperties(0.2f, 0.2f, 0f);
 	private HashMap<String, Float> heavyFlesh = makeFleshProperties(0.5f, 0.2f, 0f);
 	private HashMap<String, Float> superLightFlesh = makeFleshProperties(0.01f, 0.2f, 0f);
-	private HashMap<String, Float> shoeMaterial = makeFleshProperties(0.6f, 0.8f, 0f);
+	private HashMap<String, Float> shoeMaterial = makeFleshProperties(0.6f, 10f, 0f);
 	
 	// References to important body parts
 	private Body rightThigh;
@@ -65,6 +65,11 @@ public class Timmy extends QwopTypePlayer {
 	private float thighModifier = 70f;
 	private float calfForce = 0.5f * thighForce;
 	private float calfModifier = 70f;
+	
+	private float hipForce = 0.7f;
+	private float hipForceMod = 0.7f;
+	private float kneeForce = 0.7f;
+	private float hipTorque = 100f;
 	
 	//human modifiers
 	//private float thighForce = 0.1649f;
@@ -119,7 +124,7 @@ public class Timmy extends QwopTypePlayer {
 		holder = attachThigh(pelvis.getWorldCenter(), pelvis, 1, 40f);
 		leftHipJoint = (RevoluteJoint) holder[0];
 		leftThigh = (Body) holder[1];
-		holder = attachCalf(leftThigh.getWorldCenter(), leftThigh, 1, -30f);
+		holder = attachCalf(leftThigh.getWorldCenter(), leftThigh, 1, 10f);
 		leftKneeJoint = (RevoluteJoint) holder[0];
 		leftCalf = (Body) holder[1];
 		leftKnee = (Body) holder[2];
@@ -160,11 +165,15 @@ public class Timmy extends QwopTypePlayer {
 		// move right thigh
 		// turn right thigh clockwise and left thigh counter clockwise
 		setThighRotationLock(false);
-		//setCalfRotationLock(false);
-		rightThigh.applyAngularImpulse(thighForce, false);
-		leftThigh.applyTorque(-thighForce*thighModifier, true);
-		//rightThigh.applyTorque(thighForce, false);
-		//leftThigh.applyTorque(thighModifier*-thighForce, true);
+		rightHipJoint.setMotorSpeed(hipForce);
+		rightHipJoint.setMaxMotorTorque(hipTorque);
+		
+		leftHipJoint.setMotorSpeed(-hipForce * hipForceMod);
+		leftHipJoint.setMaxMotorTorque(hipTorque);
+		
+		rightHipJoint.enableMotor(true);
+		leftHipJoint.enableMotor(true);
+		pelvis.applyForceToCenter(0.01f, 0, true);
 		
 	}
 
@@ -173,9 +182,15 @@ public class Timmy extends QwopTypePlayer {
 		// move left thigh
 		// turn left thigh clockwise and right thigh counter clockwise
 		setThighRotationLock(false);
-		//setCalfRotationLock(false);
-		leftThigh.applyAngularImpulse(thighForce, true);
-		rightThigh.applyTorque(-thighForce*thighModifier, true);
+		leftHipJoint.setMotorSpeed(hipForce);
+		leftHipJoint.setMaxMotorTorque(hipTorque);
+		
+		rightHipJoint.setMotorSpeed(-hipForce * hipForceMod);
+		rightHipJoint.setMaxMotorTorque(hipTorque);
+		
+		rightHipJoint.enableMotor(true);
+		leftHipJoint.enableMotor(true);
+		pelvis.applyForceToCenter(0.01f, 0, true);
 	}
 
 	@Override
@@ -183,9 +198,14 @@ public class Timmy extends QwopTypePlayer {
 		// move left calf
 		// turn left calf counter clockwise and right calf clockwise
 		setCalfRotationLock(false);
-		leftCalf.applyAngularImpulse(-calfForce,  true);
-		rightCalf.applyTorque(calfForce * calfModifier, true);
+		leftKneeJoint.setMotorSpeed(-kneeForce);
+		leftKneeJoint.setMaxMotorTorque(hipTorque);
 		
+		rightKneeJoint.setMotorSpeed(kneeForce);
+		rightKneeJoint.setMaxMotorTorque(hipTorque);
+		
+		leftKneeJoint.enableMotor(true);
+		rightKneeJoint.enableMotor(true);	
 	}
 
 	@Override
@@ -193,16 +213,23 @@ public class Timmy extends QwopTypePlayer {
 		// move right calf
 		// turn right calf counter clockwise and left calf clockwise
 		setCalfRotationLock(false);
-		rightCalf.applyAngularImpulse(-calfForce,  true);
-		leftCalf.applyTorque(calfForce * calfModifier, true);
-		//rightCalf.applyTorque(calfModifier*-calfForce,  true);
-		//leftCalf.applyTorque(calfForce, true);
+		
+		rightKneeJoint.setMotorSpeed(-kneeForce);
+		rightKneeJoint.setMaxMotorTorque(hipTorque);
+		
+		leftKneeJoint.setMotorSpeed(kneeForce);
+		leftKneeJoint.setMaxMotorTorque(hipTorque);
+		
+		rightKneeJoint.enableMotor(true);
+		leftKneeJoint.enableMotor(true);
 	}
 
 	@Override
 	public void stopActionW() {
 		inAction = false;
 		setThighRotationLock(true);
+		rightHipJoint.enableMotor(false);
+		leftHipJoint.enableMotor(false);
 		//setCalfRotationLock(true);
 	}
 
@@ -210,6 +237,8 @@ public class Timmy extends QwopTypePlayer {
 	public void stopActionE() {
 		inAction = false;
 		setThighRotationLock(true);
+		rightHipJoint.enableMotor(false);
+		leftHipJoint.enableMotor(false);
 		//setCalfRotationLock(true);
 	}
 
@@ -217,12 +246,16 @@ public class Timmy extends QwopTypePlayer {
 	public void stopActionR() {
 		inAction = false;
 		setCalfRotationLock(true);
+		rightKneeJoint.enableMotor(false);
+		leftKneeJoint.enableMotor(false);
 	}
 
 	@Override
 	public void stopActionT() {
 		inAction = false;
 		setCalfRotationLock(true);
+		rightKneeJoint.enableMotor(false);
+		leftKneeJoint.enableMotor(false);
 	}
 	
 	//================================================================================
@@ -345,7 +378,7 @@ public class Timmy extends QwopTypePlayer {
 		Vector2 pelvisPos = new Vector2(refPoint.x, refPoint.y);
 
 		// lock pelvis rotation
-		this.pelvis = makeBoxPart(pelvisPos, 1, 0.8f, 0, lightFlesh, true, WertId.PELVIS);
+		this.pelvis = makeBoxPart(pelvisPos, 1, 0.8f, 0, lightFlesh, WertId.PELVIS);
 		//this.pelvis = makeBoxPart(pelvisPos, 0.6f, 1, 0, heavyFlesh, true, WertId.PELVIS);
 		BodyData pelvisData = (BodyData) pelvis.getUserData();
 		
@@ -371,9 +404,8 @@ public class Timmy extends QwopTypePlayer {
 		// connect thigh to pelvis joint
 		Vector2 thighAnchorTop = new Vector2(0, lengthRatio*(thighData.halfHeight));
 		//Vector2 pelvisAnchor = new Vector2((direction*0)*pelvisData.halfWidth, lengthRatio*-(pelvisData.halfHeight));
-		Vector2 pelvisAnchor = new Vector2(0, 0);
-		RevoluteJoint hipJoint = bodyPartConnector.connectRevolute(pelvis, thigh, pelvisAnchor, thighAnchorTop, true, -65, 65);
-		
+		Vector2 pelvisAnchor = new Vector2((pelvisData.halfWidth * 0.5f), 0);
+		RevoluteJoint hipJoint = bodyPartConnector.connectRevolute(pelvis, thigh, pelvisAnchor, thighAnchorTop, true, -40, 40);
 		Object[] arr = {hipJoint, thigh};
 		return arr;
 	}
@@ -419,6 +451,14 @@ public class Timmy extends QwopTypePlayer {
 		Vector2 footAnchor = new Vector2(lengthRatio*-(footData.halfHeight), 0);
 		bodyPartConnector.connectRevolute(calf, foot, calfAnchor, footAnchor, true, -10f, 15f);
 		return foot;
+	}
+	
+	private void setRightThighRotationLock(boolean bool) {
+		rightThigh.setFixedRotation(bool);
+	}
+	
+	private void setLeftThighRotationLock(boolean bool) {
+		leftThigh.setFixedRotation(bool);
 	}
 	
 	private void setThighRotationLock(boolean bool) {
@@ -468,6 +508,8 @@ public class Timmy extends QwopTypePlayer {
 	
 	// bodytype if specified in instance variable
 	// Used to create torso and head
+	
+	/*
 	private Body makeBoxPart(Vector2 pos, float widthMultx, float heightMultx, float startingAngle, HashMap<String, Float> material, WertId id) {
 		float partWidth = widthMultx*unit;
 		float partHeight = heightMultx*unit;
@@ -475,6 +517,7 @@ public class Timmy extends QwopTypePlayer {
 		body.setUserData(new BodyData(partWidth, partHeight, id));
 		return body;
 	}
+	*/
 	
 	private Body makeBoxPart(Vector2 pos, float widthMultx, float heightMultx, float startingAngle, HashMap<String, Float> material, boolean fixed, WertId wid) {
 		float partWidth = widthMultx*unit;
@@ -484,4 +527,11 @@ public class Timmy extends QwopTypePlayer {
 		return body;
 	}
 	
+	private Body makeBoxPart(Vector2 pos, float widthMultx, float heightMultx, float startingAngle, HashMap<String, Float> material, WertId wid) {
+		float partWidth = widthMultx*unit;
+		float partHeight = heightMultx*unit;
+		Body body = bodyPartFactory.makeBoxBody(pos, partWidth, partHeight, material, BodyType.DynamicBody, CollisionGroups.PLAYER, CollisionGroups.OTHER, true, startingAngle);
+		body.setUserData(new BodyData(partWidth, partHeight, wid));
+		return body;
+	}
 }

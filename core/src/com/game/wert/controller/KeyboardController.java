@@ -42,22 +42,22 @@ public class KeyboardController implements InputProcessor {
 	            break;
 	        case Keys.W:
 	        	w = true;
-	        	//playerActions.startActionW();
+	        	playerActions.startActionW();
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.E:
 	        	e = true;
-	        	//playerActions.startActionE();
+	        	playerActions.startActionE();
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.R:
 	        	r = true;
-	        	//playerActions.startActionR();
+	        	playerActions.startActionR();
 	        	keyProcessed = true;
 	        	break;
 	        case Keys.T:
 	        	t = true;
-	        	//playerActions.startActionT();
+	        	playerActions.startActionT();
 	        	keyProcessed = true;
         }
 	return keyProcessed;	//  return our peyProcessed flag

@@ -3,7 +3,9 @@ package com.game.wert.learn;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.game.wert.WertContactListener;
 import com.game.wert.controller.VirtualKeyPresser;
@@ -40,7 +42,7 @@ public class WertEnvironment {
 		state = new Quadruple();
 		
 		// Hip angle range is -65 to 65. With 130 toal angles and 65 buckets every bucket has a range of 2 degrees
-		nHipStates = 65;
+		nHipStates = 40;
 		
 		// Knee angle range is -150 to 0. With 50 states every bucket has a range of 3 degrees
 		nKneeStates = 50;
@@ -58,24 +60,30 @@ public class WertEnvironment {
 	}
 	
 	public StepResults step(int action, float delta) {
-		Quadruple nextState = new Quadruple();
-		float oldPos = player.playerPosition().x;
-		
-		// assume all actions are legal all the time
-		//QwopActionHandler.doAction(player, action, delta, world);
-		performAction(action, delta, delta*5);
-		
-		// fill in nextState after performing action
-		stateUpdater(nextState);
-		float newPos = player.playerPosition().x;
-		
-		// simple reward function
-		float reward = newPos - oldPos;
-		
-		state = nextState;
-		stepCount += 1;
-		// stepCount > horizon?? right now default that to false
-		return new StepResults(nextState, reward, isTerminal() || false);
+			Quadruple nextState = new Quadruple();
+			float oldPos = player.playerPosition().x;
+			
+			// assume all actions are legal all the time
+			performAction(action, delta, delta*20);
+			
+			// wait for 10 frames
+			float refractoryDelay = delta*20;
+			float refractoryCounter = 0;
+			while(refractoryCounter < refractoryDelay) {
+				refractoryCounter += delta;
+				world.step(delta, 6, 2);
+			}
+			// fill in nextState after performing action
+			stateUpdater(nextState);
+			float newPos = player.playerPosition().x;
+			
+			// simple reward function
+			float reward = newPos - oldPos;
+			
+			state = nextState;
+			stepCount += 1;
+			// stepCount > horizon?? right now default that to false
+			return new StepResults(nextState, reward, isTerminal() || false);
 	}
 	
 	public void reset() {
@@ -96,32 +104,32 @@ public class WertEnvironment {
 		float stepCounter = 0;
 		switch(action) {
 		case 0:
+			player.startActionW();
 			while(stepCounter < timeDelay) {
-				player.startActionW();
 				stepCounter += delta;
 				world.step(delta, 6, 2);
 			}
 			player.stopActionW();
 			break;
 		case 1:
+			player.startActionE();
 			while(stepCounter < timeDelay) {
-				player.startActionE();
 				stepCounter += delta;
 				world.step(delta, 6, 2);
 			}
 			player.stopActionE();
 			break;
 		case 2:
+			player.startActionR();
 			while(stepCounter < timeDelay) {
-				player.startActionR();
 				stepCounter += delta;
 				world.step(delta, 6, 2);
 			}
 			player.stopActionR();
 			break;
 		case 3:
+			player.startActionT();
 			while(stepCounter < timeDelay) {
-				player.startActionT();
 				stepCounter += delta;
 				world.step(delta, 6, 2);
 			}
